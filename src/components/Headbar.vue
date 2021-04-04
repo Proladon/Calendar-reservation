@@ -13,12 +13,20 @@
     
     <div class="week-day-container">
       <div class="select-date-btn">💎</div>
-      
-      <div class="day-btn" v-for="dTitle, index in dayEnTitle" :key="dTitle">
-        <div class="day-en-tile">{{dTitle}}</div>
-        <div class="day-num">0{{index + 1}}</div>
-      </div>
 
+      <div class="day-btn-container">
+        <div class="day-btn" v-for="dTitle, index in dayEnTitle" :key="dTitle">
+          
+          <div class="day-num-wrapper selected">
+            <div class="day-en-tile">{{dTitle}}</div>
+            <div class="day-num">0{{index + 1}}</div>
+          </div>
+
+          <div class="hint-dot">·</div>
+        </div>
+      </div>
+      
+      
     </div>
 
   </div>
@@ -40,7 +48,7 @@ export default {
 <style scoped>
 .headbar{
   @apply flex flex-col justify-between;
-  @apply shadow-md h-1/6 p-2;
+  @apply shadow-md h-1/6 px-2 pt-2;
 }
 
 .func-btn-container{
@@ -51,14 +59,11 @@ export default {
   @apply flex justify-between;
 }
 
-.day-btn{
-  @apply flex justify-center items-center;
-  @apply flex-col text-gray-700 text-sm;
-}
+
 
 .change-btn{
   background-color: #DEDAF4;
-  @apply cursor-pointer rounded-full p-2 px-3 text-sm;
+  @apply cursor-pointer rounded-full p-2 px-3 text-sm leading-4;
 }
 
 .cur-date{
@@ -68,4 +73,28 @@ export default {
 .view{
   @apply mr-3;
 }
+
+
+.day-btn-container{
+  @apply flex;
+}
+
+.day-btn{
+  @apply flex justify-center items-center;
+  @apply flex-col text-gray-700 text-sm px-1 text-center ;
+}
+
+.day-num-wrapper{
+  @apply pt-0.5 pb-0.5 px-2.5 leading-4; 
+}
+
+.hint-dot{
+  @apply m-0 p-0 text-sm leading-3;
+}
+
+.selected{
+  background-color: #7F74B4;
+  @apply rounded-md
+}
+
 </style>
