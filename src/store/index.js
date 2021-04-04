@@ -5,9 +5,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    curDate: ''
+    curDate: '',
+    viewMode: 'week' // day | week
   },
   mutations: {
+    UPDATE_CURDATE: (state, date) => {
+      state.curDate = date
+    }
   },
   actions: {
   },

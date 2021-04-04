@@ -15,7 +15,7 @@
       <div class="select-date-btn">💎</div>
 
       <div class="day-btn-container">
-        <div class="day-btn" v-for="dTitle, index in dayEnTitle" :key="dTitle">
+        <div class="day-btn" v-for="dTitle, index in dayEnTitle" :key="`day-${index}`">
           
           <div class="day-num-wrapper selected">
             <div class="day-en-tile">{{dTitle}}</div>
@@ -48,7 +48,7 @@ export default {
 <style scoped>
 .headbar{
   @apply flex flex-col justify-between;
-  @apply shadow-md h-1/6 px-2 pt-2;
+  @apply shadow-md h-1/6 px-2 pt-2 bg-white;
 }
 
 .func-btn-container{
