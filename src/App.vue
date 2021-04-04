@@ -17,6 +17,9 @@ export default {
   components: {
     Headbar,
     DateTable
+  },
+  mounted(){
+    // get today date
   }
 }
 </script>
@@ -29,7 +32,7 @@ html, body, #app{
 
 .footer{
   @apply flex justify-center absolute bottom-0;
-  @apply w-full bg-gradient-to-t from-white to-transparent;
+  @apply w-full bg-gradient-to-t from-white to-transparent pointer-events-none;
 }
 
 .reservation-btn{

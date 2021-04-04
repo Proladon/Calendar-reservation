@@ -6,7 +6,7 @@
       <input type="date" name="" id="">
       <div class="cur-date">
       </div>
-      <div class="view change-btn">日檢視 ▼</div>
+      <div class="view change-btn" @click="changeMode">日檢視 ▼</div>
       <div class="user change-btn">江 ▼</div>
 
     </div>
@@ -40,7 +40,23 @@ export default {
     return{
       dayEnTitle: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
     }
+  },
+  computed:{
+    viewMode(){return this.$store.state.viewMode}
+  },
+  methods:{
+    changeMode(){
+      switch(this.viewMode){
+        case 'day':
+          this.$store.commit('CHANGE_VIEWMODE', 'week')
+          break
+        case 'week':
+          this.$store.commit('CHANGE_VIEWMODE', 'day')
+          break
+      }
+    }
   }
+
   
 }
 </script>
@@ -94,7 +110,7 @@ export default {
 
 .selected{
   background-color: #7F74B4;
-  @apply rounded-md
+  @apply rounded-md text-white;
 }
 
 </style>
