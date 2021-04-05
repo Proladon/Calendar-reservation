@@ -70,12 +70,14 @@ export default {
       const offsetX = mouse.offset.x
       const offsetY = mouse.offset.y
 
-      if(offsetX > offsetY && this.weekPage > 0){
+      if(offsetX > offsetY){
         // to left
+        this.$store.commit('UPDATE_CURRENT', subDate(this.current, 7))
         this.$store.commit('CAHNGE_PAGE', this.weekPage - 1)
       }
-      else if(offsetX < offsetY && this.weekPage < 5){
+      else if(offsetX < offsetY){
         // to right
+        this.$store.commit('UPDATE_CURRENT', addDate(this.current, 7))
         this.$store.commit('CAHNGE_PAGE', this.weekPage + 1)
       }
 
@@ -95,9 +97,6 @@ export default {
         // to right > add date
         this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
       }
-
-      // TODO weekpage 0 往左切換到上個月
-      // TODO weekpage 5 往又切換到下個月
     },
 
 

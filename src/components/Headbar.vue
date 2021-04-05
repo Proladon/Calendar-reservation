@@ -3,14 +3,14 @@
     <div class="func-btn-container">
       <!-- <p>預約行事曆</p> -->
       <div class="current-date-container">
-        <p>{{curDate}}</p>
+        <p class="pl-1">{{viewMode === 'day' ? curDate : '預約行事曆'}}</p>
       </div>
 
       <div class="cur-date"></div>
       <div class="view change-btn" @click="changeMode">
         {{ viewMode === "day" ? "日檢視" : "周檢視" }} ▼
       </div>
-      <div class="user change-btn">江 ▼</div>
+      <div class="user change-btn">P ▼</div>
     </div>
 
     <div class="week-day-container">
@@ -73,7 +73,7 @@ export default {
       const year = this.current.getFullYear()
       const month = this.current.getMonth()
       const date = this.current.getDate()
-      return `${year} / ${month} / ${date}`
+      return `${year} / ${month + 1} / ${date}`
     }
   },
 
@@ -125,12 +125,14 @@ export default {
       // startDay offset
       const offset = startDay - 1;
 
+
       // arrary all date in month
       const allDays = new Array(offset).fill(" ");
       for (let i = 1; i <= daysOfMonth; i++) {
         allDays.push(i);
       }
 
+      
       // slice days page
 
       for (
@@ -141,16 +143,23 @@ export default {
         this.days.push(allDays.slice(times * 7, times * 7 + 7));
       }
 
+      // offset fill
+      const offsetEnd = 7 - this.days[this.days.length - 1].length
+      console.log(offsetEnd)
+      for(let i=1; i<=offsetEnd; i++){
+        this.days[this.days.length - 1].push(' ')
+      }
+
     },
 
     changeMode() {
       switch (this.viewMode) {
         case "day":
-          this.$store.commit("CHANGE_VIEWMODE", "week");
-          break;
+          this.$store.commit("CHANGE_VIEWMODE", "week")
+          break
         case "week":
-          this.$store.commit("CHANGE_VIEWMODE", "day");
-          break;
+          this.$store.commit("CHANGE_VIEWMODE", "day")
+          break
       }
     },
 
@@ -165,7 +174,8 @@ export default {
 
       // update curdate
       const date = this.days[this.weekPage][index];
-      new Date(this.current.year, this.current.month, date);
+      const newCurrent = new Date(this.current.getFullYear(), this.current.getMonth(), date)
+      this.$store.commit('UPDATE_CURRENT', newCurrent)
     },
   },
 
