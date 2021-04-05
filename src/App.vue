@@ -3,7 +3,7 @@
     <Headbar />
     <DateTable />
     <div class="footer">
-      <div class="reservation-btn">+ 新增預約</div>
+      <div class="reservation-btn pointer-events-auto">+ 新增預約</div>
     </div>
 
   </div>

@@ -51,7 +51,7 @@ export default new Vuex.Store({
       
       return {
         year: today.getFullYear(),
-        month: today.getMonth(),
+        month: today.getMonth() + 1,
         date: today.getDate(),
         day: today.getDay()
       }

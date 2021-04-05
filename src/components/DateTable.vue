@@ -86,16 +86,18 @@ export default {
     changeDate(e, mouse){
       const offsetX = mouse.offset.x
       const offsetY = mouse.offset.y
-      console.log(offsetX, offsetY)
 
-      if(offsetX > offsetY && this.weekPage > 0){
+      if(offsetX > offsetY){
         // to left > sub date
         this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
       }
-      else if(offsetX < offsetY && this.weekPage < 5){
+      else if(offsetX < offsetY){
         // to right > add date
         this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
       }
+
+      // TODO weekpage 0 往左切換到上個月
+      // TODO weekpage 5 往又切換到下個月
     },
 
 
