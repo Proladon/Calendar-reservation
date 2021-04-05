@@ -1,6 +1,6 @@
 <template>
   <div class="date-table">
-    <Splide :options="splideOptions" @splide:dragged="changePage">
+    <Splide v-show="viewMode === 'week'" :options="splideOptions" @splide:dragged="changePage">
       <splide-slide>
         <!-- week view -->
         <table>
@@ -18,18 +18,18 @@
           </tbody>
         </table>
 
-        <!-- day view -->
-        <table>
-          <tbody class="week-mode" v-show="viewMode === 'day'">
-            <tr v-for="hours in 24" :key="`${hours}h`">
-              <td class="time-period">{{ hours }}:00</td>
-              <td @click="daySelected(hours, $event.target)"></td>
-            </tr>
-          </tbody>
-        </table>
       </splide-slide>
-
     </Splide>
+    
+    <!-- day view -->
+    <table>
+      <tbody class="week-mode" v-show="viewMode === 'day'">
+        <tr v-for="hours in 24" :key="`${hours}h`">
+          <td class="time-period">{{ hours }}:00</td>
+          <td @click="daySelected(hours, $event.target)"></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -56,18 +56,30 @@ export default {
     };
   },
   computed: {
-    viewMode() {
-      return this.$store.state.viewMode;
-    },
-    todayInfo() {
-      return this.$store.getters.todayInfo;
-    },
+    viewMode() {return this.$store.state.viewMode;},
+    todayInfo() {return this.$store.getters.todayInfo;},
+    weekPage(){return this.$store.state.weekPage},
   },
   methods: {
-    changePage(num){
-      console.log(num)
+    // 滑動切換週日期
+    changePage(e, mouse){
+      const offsetX = mouse.offset.x
+      const offsetY = mouse.offset.y
 
+      if(offsetX > offsetY && this.weekPage > 0){
+        // to left
+        this.$store.commit('CAHNGE_PAGE', this.weekPage - 1)
+      }
+      else if(offsetX < offsetY && this.weekPage < 5){
+        // to right
+        this.$store.commit('CAHNGE_PAGE', this.weekPage + 1)
+      }
+
+      // TODO weekpage 0 往左切換到上個月
+      // TODO weekpage 5 往又切換到下個月
     },
+
+
     weekSelected(hours, el) {
       const selected = this.selected;
       const week = Array.from(el.parentElement.children).indexOf(el);
@@ -86,6 +98,8 @@ export default {
         });
       }
     },
+
+
     daySelected(hours, el) {
       const selected = this.selected;
       if (selected.includes(hours)) {

@@ -7,7 +7,12 @@ export default new Vuex.Store({
   state: {
 
     today: new Date(),
-    current: '',
+    current: {
+      year: '',
+      month: '',
+      date: '',
+      day: '',
+    },
     weekPage:0,
     viewMode: 'week', // day | week
     reservation:[],
@@ -23,6 +28,10 @@ export default new Vuex.Store({
       state.reservation.push(date)
     },
 
+    UPDATE_TODAY: (state, date) => {
+      state.today = date
+    },
+    
     UPDATE_CURRENT: (state, date) => {
       state.current = date
     },
@@ -49,8 +58,9 @@ export default new Vuex.Store({
         year: today.getFullYear(),
         month: today.getMonth(),
         date: today.getDate(),
+        day: today.getDay()
       }
-    }
+    },
 
   }
 })

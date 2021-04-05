@@ -17,7 +17,7 @@
       <div class="day-btn-container" v-if="days.length > 0">
         <div class="day-btn" v-for="dTitle,index in dayEnTitle" :key="`day-${index}`">
           
-          <div class="day-num-wrapper" @click="selectDate($event.target)">
+          <div class="day-num-wrapper" @click="selectDate($event.target, index)">
             <div class="day-en-tile pointer-events-none">{{dTitle}}</div>
             
             <!-- Cannot read property '0' of undefined ?? -->
@@ -49,8 +49,9 @@ export default {
 
   computed:{
     viewMode(){return this.$store.state.viewMode},
-    todayInfo(){return this.$store.getters.todayInfo},
+    today(){return this.$store.getters.todayInfo},
     weekPage(){return this.$store.state.weekPage},
+    current(){return this.$store.getters.currentInfo},
   },
 
   methods:{
@@ -58,15 +59,14 @@ export default {
       const date = this.days[this.weekPage][index]
       return date < 10? `0${date}`: date
     },
-    // pad(num){
-    //   return num < 10? `0${num}`: num
-    // },
+
+
     daysPageInit(){
       // how many days in month
-      const daysOfMonth = getDays(this.todayInfo.year, this.todayInfo.month)
+      const daysOfMonth = getDays(this.today.year, this.today.month)
       
       // day of month first date
-      const startDay = new Date(this.todayInfo.year, this.todayInfo.month, 1).getDay() + 1
+      const startDay = new Date(this.today.year, this.today.month, 1).getDay() + 1
 
       // startDay offset
       const offset = startDay - 1
@@ -82,6 +82,8 @@ export default {
         this.days.push(allDays.slice(times*7, times*7 + 7))
       }
     },
+
+
     changeMode(){
       switch(this.viewMode){
         case 'day':
@@ -93,19 +95,41 @@ export default {
       }
     },
 
-    selectDate(el){
+
+    selectDate(el, index){
       document.getElementsByClassName('day-num-wrapper').forEach(element => {
         element.classList.remove('selected')
       })
 
       el.classList.add('selected')
+
+      
       // update curdate
+      const date = this.days[this.weekPage][index]
+      new Date(this.current.year, this.current.month, date)
+
+
     }
   },
   
   mounted(){
     this.daysPageInit()
-    console.log(this.weekPage)
+
+    // select today
+    for(let index in this.days){
+      if(this.days[index].includes(this.today.date)){
+        const page = index
+        const dateIndex = this.days[index].indexOf(this.today.date)
+
+        this.$nextTick(()=>{
+          const el = document.getElementsByClassName('day-num-wrapper')
+          el[dateIndex].classList.add('selected')
+          
+          this.$store.commit('CAHNGE_PAGE', parseInt(page))
+        })
+
+      }
+    }
   }
   
 }
