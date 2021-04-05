@@ -1,10 +1,10 @@
 <template>
   <div class="date-table">
-    <Splide v-show="viewMode === 'week'" :options="splideOptions" @splide:dragged="changePage">
+    <Splide v-if="viewMode === 'week'" :options="splideOptions" @splide:dragged="changePage">
       <splide-slide>
         <!-- week view -->
         <table>
-          <tbody class="day-mode" v-show="viewMode === 'week'">
+          <tbody class="week-mode" v-show="viewMode === 'week'">
             <tr v-for="hours in 24" :key="`${hours}h`" @click="weekSelected(hours, $event.target)">
               <td class="time-period">{{ hours }}:00</td>
               <td></td>
@@ -17,24 +17,27 @@
             </tr>
           </tbody>
         </table>
-
       </splide-slide>
     </Splide>
-    
-    <!-- day view -->
-    <table>
-      <tbody class="week-mode" v-show="viewMode === 'day'">
-        <tr v-for="hours in 24" :key="`${hours}h`">
-          <td class="time-period">{{ hours }}:00</td>
-          <td @click="daySelected(hours, $event.target)"></td>
-        </tr>
-      </tbody>
-    </table>
+
+    <Splide v-if="viewMode === 'day'" :options="splideOptions" @splide:dragged="changeDate">
+      <splide-slide>
+        <!-- day view -->
+        <table>
+          <tbody class="day-mode" v-show="viewMode === 'day'">
+            <tr v-for="hours in 24" :key="`${hours}h`">
+              <td class="time-period">{{ hours }}:00</td>
+              <td @click="daySelected(hours, $event.target)"></td>
+            </tr>
+          </tbody>
+        </table>
+      </splide-slide>
+    </Splide>
   </div>
 </template>
 
 <script>
-import { getDays } from "@/assets/utils.js";
+import { getDays, subDate, addDate } from "@/assets/utils.js";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import '@splidejs/splide/dist/css/themes/splide-default.min.css';
 export default {
@@ -57,6 +60,7 @@ export default {
   },
   computed: {
     viewMode() {return this.$store.state.viewMode;},
+    current() {return this.$store.state.current;},
     todayInfo() {return this.$store.getters.todayInfo;},
     weekPage(){return this.$store.state.weekPage},
   },
@@ -77,6 +81,21 @@ export default {
 
       // TODO weekpage 0 往左切換到上個月
       // TODO weekpage 5 往又切換到下個月
+    },
+
+    changeDate(e, mouse){
+      const offsetX = mouse.offset.x
+      const offsetY = mouse.offset.y
+      console.log(offsetX, offsetY)
+
+      if(offsetX > offsetY && this.weekPage > 0){
+        // to left > sub date
+        this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
+      }
+      else if(offsetX < offsetY && this.weekPage < 5){
+        // to right > add date
+        this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
+      }
     },
 
 
@@ -132,7 +151,7 @@ tr {
   width: 100%;
 }
 
-.day-mode {
+.day-mode, .week-mode {
   width: 100%;
 }
 

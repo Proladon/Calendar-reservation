@@ -7,12 +7,7 @@ export default new Vuex.Store({
   state: {
 
     today: new Date(),
-    current: {
-      year: '',
-      month: '',
-      date: '',
-      day: '',
-    },
+    current: new Date(),
     weekPage:0,
     viewMode: 'week', // day | week
     reservation:[],
