@@ -31,35 +31,63 @@
 </template>
 
 <script>
-   export default {
+    import {getDays} from '@/assets/utils.js'
+    export default {
        name: 'DateTable',
-       computed:{
-           viewMode(){return this.$store.state.viewMode}
-       },
        data(){
            return{
-               selected:[]
+               selected:[],
+               days: 0,
            }
        },
+       
+       computed:{
+           viewMode(){return this.$store.state.viewMode},
+           todayInfo(){return this.$store.getters.todayInfo}
+       },
+
        methods:{
-           weekSelected(hours, el){
-               const week = Array.from(el.parentElement.children).indexOf(el)
-               console.log(week, hours)
-           },
-           daySelected(hours, el){
-               el.style.background = '#E5E5E5'
-               const selected = this.selected
-               if(selected.includes(hours)){
-                   selected.splice(selected.indexOf(hours), 1)
-                   el.style.background = ''
-               }
-               else{
-                   selected.push(hours)
-               }
-           },
-           clear(){
-               this.selected.length = 0
-           }
+            weekSelected(hours, el){
+                const selected = this.selected
+                const week = Array.from(el.parentElement.children).indexOf(el)
+                const isExist = selected.find(el => el.id === `${week}-${hours}`)
+
+                if(isExist){
+                    el.style.background = ''
+                    selected.splice(selected.indexOf(isExist), 1)
+                }
+                else{
+                    el.style.background = '#E5E5E5'
+                    selected.push({
+                        id: `${week}-${hours}`,
+                        month: this.todayInfo.month,
+                        date: this.todayInfo.date,
+                        week: week,
+                        period: hours
+                    })
+                }
+            },
+
+
+            daySelected(hours, el){
+                const selected = this.selected
+
+                
+ 
+                if(selected.includes(hours)){
+                    selected.splice(selected.indexOf(hours), 1)
+                    el.style.background = ''
+                }
+                else{
+                    el.style.background = '#E5E5E5'
+                    selected.push(hours)
+                }
+            },
+
+       },
+
+       mounted(){
+           this.days = getDays(this.todayInfo.year, this.todayInfo.month)
        }
    }
 </script>
