@@ -8,13 +8,27 @@ export default new Vuex.Store({
 
     today: new Date(),
     current: '',
-    viewMode: 'week' // day | week
+    weekPage:0,
+    viewMode: 'week', // day | week
+    reservation:[],
 
   },
   mutations: {
 
     CHANGE_VIEWMODE: (state, mode) => {
       state.viewMode = mode
+    },
+
+    ADD_RESERVATION: (state, date) => {
+      state.reservation.push(date)
+    },
+
+    UPDATE_CURRENT: (state, date) => {
+      state.current = date
+    },
+
+    CAHNGE_PAGE: (state, num) => {
+      state.weekPage = num
     }
 
   },

@@ -6,7 +6,7 @@
       <input type="date" name="" id="">
       <div class="cur-date">
       </div>
-      <div class="view change-btn" @click="changeMode">日檢視 ▼</div>
+      <div class="view change-btn" @click="changeMode">{{viewMode === 'day'?'日檢視':'周檢視'}} ▼</div>
       <div class="user change-btn">江 ▼</div>
 
     </div>
@@ -14,15 +14,14 @@
     <div class="week-day-container">
       <div class="select-date-btn">💎</div>
 
-      <div class="day-btn-container">
-        
+      <div class="day-btn-container" v-if="days.length > 0">
         <div class="day-btn" v-for="dTitle,index in dayEnTitle" :key="`day-${index}`">
           
           <div class="day-num-wrapper" @click="selectDate($event.target)">
             <div class="day-en-tile pointer-events-none">{{dTitle}}</div>
             
             <!-- Cannot read property '0' of undefined ?? -->
-            <div class="day-num pointer-events-none">{{days[page][index]}}</div>
+            <div class="day-num pointer-events-none" >{{pad(index)}}</div>
           </div>
 
           <div class="hint-dot">·</div>
@@ -50,10 +49,39 @@ export default {
 
   computed:{
     viewMode(){return this.$store.state.viewMode},
-    todayInfo(){return this.$store.getters.todayInfo}
+    todayInfo(){return this.$store.getters.todayInfo},
+    weekPage(){return this.$store.state.weekPage},
   },
 
   methods:{
+    pad(index){
+      const date = this.days[this.weekPage][index]
+      return date < 10? `0${date}`: date
+    },
+    // pad(num){
+    //   return num < 10? `0${num}`: num
+    // },
+    daysPageInit(){
+      // how many days in month
+      const daysOfMonth = getDays(this.todayInfo.year, this.todayInfo.month)
+      
+      // day of month first date
+      const startDay = new Date(this.todayInfo.year, this.todayInfo.month, 1).getDay() + 1
+
+      // startDay offset
+      const offset = startDay - 1
+
+      // arrary all date in month 
+      const allDays = new Array(offset).fill(' ')
+      for(let i=1; i<daysOfMonth; i++){
+        allDays.push(i)
+      }
+
+      // slice days page
+      for(let times=0; times<(Math.ceil(allDays.length/7)); times++ ){
+        this.days.push(allDays.slice(times*7, times*7 + 7))
+      }
+    },
     changeMode(){
       switch(this.viewMode){
         case 'day':
@@ -76,26 +104,8 @@ export default {
   },
   
   mounted(){
-      // how many days in month
-      const daysOfMonth = getDays(this.todayInfo.year, this.todayInfo.month)
-      
-      // day of month first date
-      const startDay = new Date(this.todayInfo.year, this.todayInfo.month, 1).getDay() + 1
-
-      // startDay offset
-      const offset = startDay - 1
-
-      // arrary all date in month 
-      const allDays = new Array(offset).fill(' ')
-      for(let i=1; i<daysOfMonth; i++){
-        allDays.push(i)
-      }
-
-      // slice days page
-      for(let times=0; times<(Math.ceil(allDays.length/7)); times++ ){
-        this.days.push(allDays.slice(times*7, times*7 + 7))
-      }
-
+    this.daysPageInit()
+    console.log(this.weekPage)
   }
   
 }

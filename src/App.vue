@@ -5,6 +5,7 @@
     <div class="footer">
       <div class="reservation-btn">+ 新增預約</div>
     </div>
+
   </div>
 </template>
 
@@ -16,7 +17,7 @@ export default {
   name: 'App',
   components: {
     Headbar,
-    DateTable
+    DateTable,
   },
   mounted(){
     // get today date
