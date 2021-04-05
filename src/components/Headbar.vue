@@ -3,7 +3,9 @@
     <div class="func-btn-container">
       <!-- <p>預約行事曆</p> -->
       <div class="current-date-container">
+        <span v-show="viewMode === 'day'" @click="backwardDate"><img class="transform rotate-180 w-5" src="@/assets/arrow.svg" alt="" srcset=""></span>
         <p class="pl-1">{{viewMode === 'day' ? curDate : '預約行事曆'}}</p>
+        <span v-show="viewMode === 'day'" @click="forwardDate"><img class="w-5" src="@/assets/arrow.svg" alt="" srcset=""></span>
       </div>
 
       <div class="cur-date"></div>
@@ -44,7 +46,7 @@
 </template>
 
 <script>
-import { getDays } from "@/assets/utils.js";
+import { getDays, subDate, addDate } from "@/assets/utils.js";
 export default {
   name: "Headbar",
 
@@ -80,27 +82,7 @@ export default {
   watch: {
     current() {
       this.daysPageInit()
-      for (let index in this.days) {
-        if (this.days[index].includes(this.current.getDate())) {
-          const page = index;
-          const dateIndex = this.days[index].indexOf(
-            this.current.getDate()
-          );
-
-
-          this.$nextTick(() => {
-            const el = document.getElementsByClassName(
-              "day-num-wrapper"
-            );
-            Array.from(el).forEach((el) =>
-              el.classList.remove("selected")
-            );
-            el[dateIndex].classList.add("selected");
-
-            this.$store.commit("CAHNGE_PAGE", parseInt(page));
-          });
-        }
-      }
+      this.updateSelected()
     },
   },
 
@@ -152,6 +134,30 @@ export default {
 
     },
 
+    updateSelected(){
+      for (let index in this.days) {
+        if (this.days[index].includes(this.current.getDate())) {
+          const page = index;
+          const dateIndex = this.days[index].indexOf(
+            this.current.getDate()
+          );
+
+
+          this.$nextTick(() => {
+            const el = document.getElementsByClassName(
+              "day-num-wrapper"
+            );
+            Array.from(el).forEach((el) =>
+              el.classList.remove("selected")
+            );
+            el[dateIndex].classList.add("selected");
+
+            this.$store.commit("CAHNGE_PAGE", parseInt(page));
+          });
+        }
+      }
+    },
+
     changeMode() {
       switch (this.viewMode) {
         case "day":
@@ -163,6 +169,8 @@ export default {
       }
     },
 
+
+    // 點選日期
     selectDate(el, index) {
       document
         .getElementsByClassName("day-num-wrapper")
@@ -177,27 +185,21 @@ export default {
       const newCurrent = new Date(this.current.getFullYear(), this.current.getMonth(), date)
       this.$store.commit('UPDATE_CURRENT', newCurrent)
     },
+
+    // 按鈕增加日期
+    forwardDate(){
+      this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
+    },
+
+    // 按鈕減少日期
+    backwardDate(){
+      this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
+    }
   },
 
   mounted() {
     this.daysPageInit();
-
-    // select today
-    for (let index in this.days) {
-      if (this.days[index].includes(this.today.date)) {
-        const page = index;
-        const dateIndex = this.days[index].indexOf(this.today.date);
-
-        this.$nextTick(() => {
-          const el = document.getElementsByClassName(
-            "day-num-wrapper"
-          );
-          el[dateIndex].classList.add("selected");
-
-          this.$store.commit("CAHNGE_PAGE", parseInt(page));
-        });
-      }
-    }
+    this.updateSelected()
   },
 };
 </script>
@@ -227,6 +229,10 @@ export default {
 
 .view {
   @apply mr-3;
+}
+
+.current-date-container{
+  @apply flex;
 }
 
 .day-btn-container {
