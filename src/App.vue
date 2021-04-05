@@ -18,10 +18,8 @@ export default {
   components: {
     Headbar,
     DateTable,
-  },
-  mounted(){
-    // get today date
   }
+
 }
 </script>
 

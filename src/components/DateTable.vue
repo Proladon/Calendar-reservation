@@ -48,7 +48,6 @@ export default {
   },
   data() {
     return {
-      selected: [],
       days: 0,
       splideOptions: {
         arrows: false,
@@ -59,10 +58,27 @@ export default {
     };
   },
   computed: {
-    viewMode() {return this.$store.state.viewMode;},
-    current() {return this.$store.state.current;},
-    todayInfo() {return this.$store.getters.todayInfo;},
-    weekPage(){return this.$store.state.weekPage},
+    viewMode() {return this.$store.state.viewMode},
+    current() {return this.$store.state.current},
+    todayInfo() {return this.$store.getters.todayInfo},
+    weekPage() {return this.$store.state.weekPage},
+    reservation() {return this.$store.state.reservation},
+    tempSelected() {return this.$store.state.tempSelected}
+  },
+  watch:{
+    // 各種狀態更新，清理暫選
+    viewMode(){
+      this.clearSelected()
+      this.$store.commit('CLEAR_TEMPSELECTED')
+    },
+    weekPage(){
+      this.clearSelected()
+      this.$store.commit('CLEAR_TEMPSELECTED')
+    },
+    current(){
+      this.clearSelected()
+      this.$store.commit('CLEAR_TEMPSELECTED')
+    }
   },
   methods: {
     // 滑動切換週日期
@@ -70,25 +86,26 @@ export default {
       const offsetX = mouse.offset.x
       const offsetY = mouse.offset.y
 
+      // TODO 包裝此判斷
       if(offsetX > offsetY){
-        // to left
+        // to left > sub date
         this.$store.commit('UPDATE_CURRENT', subDate(this.current, 7))
         this.$store.commit('CAHNGE_PAGE', this.weekPage - 1)
       }
       else if(offsetX < offsetY){
-        // to right
+        // to right > add date
         this.$store.commit('UPDATE_CURRENT', addDate(this.current, 7))
         this.$store.commit('CAHNGE_PAGE', this.weekPage + 1)
       }
-
-      // TODO weekpage 0 往左切換到上個月
-      // TODO weekpage 5 往又切換到下個月
     },
 
+
+    // 滑動切換日期
     changeDate(e, mouse){
       const offsetX = mouse.offset.x
       const offsetY = mouse.offset.y
 
+      // TODO 包裝此判斷
       if(offsetX > offsetY){
         // to left > sub date
         this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
@@ -100,36 +117,61 @@ export default {
     },
 
 
+    // weekView 下選取時段
     weekSelected(hours, el) {
-      const selected = this.selected;
+      const tempSelected = this.tempSelected;
       const week = Array.from(el.parentElement.children).indexOf(el);
-      const isExist = selected.find((el) => el.id === `${week}-${hours}`);
+      const isExist = tempSelected.find((el) => el.id === `${week}-${hours}`);
+      
       if (isExist) {
         el.style.background = "";
-        selected.splice(selected.indexOf(isExist), 1);
-      } else {
+        tempSelected.splice(tempSelected.indexOf(isExist), 1);
+      } 
+      else {
         el.style.background = "#E5E5E5";
-        selected.push({
+        this.$store.commit('ADD_TEMPSELECTED', {
           id: `${week}-${hours}`,
-          month: this.todayInfo.month,
-          date: this.todayInfo.date,
-          week: week,
+          date: this.current,
+          week: this.weekPage,
+          el: el,
+          dayweek: week,
           period: hours,
-        });
+        })
       }
     },
 
 
+    // dayView 下選取時段
+    // 點太快會有bug...(源因未釐清)
     daySelected(hours, el) {
-      const selected = this.selected;
-      if (selected.includes(hours)) {
-        selected.splice(selected.indexOf(hours), 1);
-        el.style.background = "";
-      } else {
+      const tempSelected = this.tempSelected;
+      const date = this.current.getDate()
+      const isExist = tempSelected.find((el) => el.id === `${date}-${hours}`);
+      
+      if (isExist) {
+        this.$store.commit('REMOVE_TEMPSELECTED', tempSelected.indexOf(`${date}-${hours}`))
+        el.style.background = ""
+      } 
+      else {
         el.style.background = "#E5E5E5";
-        selected.push(hours);
+        this.$store.commit('ADD_TEMPSELECTED', {
+          id: `${date}-${hours}`,
+          date: this.current,
+          week: this.weekPage,
+          el: el,
+          dayweek: this.current.getDay(),
+          period: hours,
+        })
       }
     },
+
+
+    // 清理暫時選取 highlight 表格
+    clearSelected(){
+      this.tempSelected.forEach(element => {
+        element.el.style.background = ''
+      })
+    }
   },
   mounted() {
     this.days = getDays(this.todayInfo.year, this.todayInfo.month);

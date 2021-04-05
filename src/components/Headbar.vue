@@ -127,7 +127,6 @@ export default {
 
       // offset fill
       const offsetEnd = 7 - this.days[this.days.length - 1].length
-      console.log(offsetEnd)
       for(let i=1; i<=offsetEnd; i++){
         this.days[this.days.length - 1].push(' ')
       }

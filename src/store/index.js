@@ -10,17 +10,13 @@ export default new Vuex.Store({
     current: new Date(),
     weekPage:0,
     viewMode: 'week', // day | week
-    reservation:[],
-
+    reservations:[],
+    tempSelected: [],
   },
   mutations: {
 
     CHANGE_VIEWMODE: (state, mode) => {
       state.viewMode = mode
-    },
-
-    ADD_RESERVATION: (state, date) => {
-      state.reservation.push(date)
     },
 
     UPDATE_TODAY: (state, date) => {
@@ -33,6 +29,29 @@ export default new Vuex.Store({
 
     CAHNGE_PAGE: (state, num) => {
       state.weekPage = num
+    },
+
+    UPDATE_SELECTED: (state, data) => {
+      state.selected = data
+    },
+
+    ADD_RESERVATION: (state, data) => {
+      data.forEach(el => {
+        state.reservations.push(el)
+      })
+    },
+
+    // Reservation
+    ADD_TEMPSELECTED: (state, data) => {
+      state.tempSelected.push(data)
+    },
+
+    REMOVE_TEMPSELECTED: (state, index) => {
+      state.tempSelected.splice(index, 1)
+    },
+    
+    CLEAR_TEMPSELECTED: (state) => {
+      state.tempSelected = []
     }
 
   },
