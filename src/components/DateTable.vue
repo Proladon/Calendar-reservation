@@ -168,6 +168,7 @@ export default {
 
     // 清理暫時選取 highlight 表格
     clearSelected(){
+      // TODO 如果在reservations 列表中的元素則不清除，並變換其顏色與新增資訊
       this.tempSelected.forEach(element => {
         element.el.style.background = ''
       })

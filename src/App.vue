@@ -1,23 +1,39 @@
 <template>
   <div id="app">
-    <Headbar />
+    <Headbar @calendar="openCalendar = !openCalendar" />
+    
+    <Calendar v-if="openCalendar" @close="openCalendar = false" year="2021" month="4" />
+
     <DateTable />
     <div class="footer">
-      <div class="reservation-btn pointer-events-auto">+ 新增預約</div>
+      <div class="reservation-btn pointer-events-auto" @click="reservation">+ 新增預約</div>
     </div>
-
   </div>
 </template>
 
 <script>
 import Headbar from './components/Headbar.vue'
 import DateTable from './components/DateTable.vue'
+import Calendar from '@/components/Calendar.vue'
+
 
 export default {
   name: 'App',
+  
   components: {
     Headbar,
     DateTable,
+    Calendar,
+  },
+  data(){
+    return{
+      openCalendar: false
+    }
+  },
+  methods:{
+    reservation(){
+      this.$store.commit('ADD_RESERVATIONS')
+    },
   }
 
 }

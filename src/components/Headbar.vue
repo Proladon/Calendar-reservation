@@ -16,7 +16,7 @@
     </div>
 
     <div class="week-day-container">
-      <div class="select-date-btn">💎</div>
+      <div class="select-date-btn" @click="$emit('calendar')">💎</div>
 
       <div class="day-btn-container" v-if="days.length > 0">
         <div
@@ -47,9 +47,10 @@
 
 <script>
 import { getDays, subDate, addDate } from "@/assets/utils.js";
+
 export default {
   name: "Headbar",
-
+  
   data() {
     return {
       dayEnTitle: ["M", "T", "W", "T", "F", "S", "S"],

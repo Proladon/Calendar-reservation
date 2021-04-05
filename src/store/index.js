@@ -35,13 +35,13 @@ export default new Vuex.Store({
       state.selected = data
     },
 
-    ADD_RESERVATION: (state, data) => {
-      data.forEach(el => {
-        state.reservations.push(el)
-      })
-    },
+    
 
     // Reservation
+    ADD_RESERVATIONS: (state) => {
+      state.reservations = state.tempSelected
+    },
+
     ADD_TEMPSELECTED: (state, data) => {
       state.tempSelected.push(data)
     },
