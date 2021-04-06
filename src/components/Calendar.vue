@@ -1,8 +1,9 @@
 <template>
-  <div id="calendar">
+  <div class="calendar">
     <div class="calendar-title">
       {{year}} / {{month}}
     </div>
+  
   <table>
     <tbody class="calendar-content">
       <tr v-for="row, index in days" :key="`row-${index}`">
@@ -14,9 +15,7 @@
           {{date}}
         </td>
       </tr>
-      
     </tbody>
-
   </table>
 
   </div>
@@ -100,14 +99,14 @@ export default {
 </script>
 
 <style scoped>
-#calendar{
+.calendar{
   @apply absolute top-0 bottom-0 right-0 left-0 z-50;
-  @apply w-full h-full bg-gray-700 opacity-80;
+  @apply w-full h-full bg-gray-700 opacity-80 px-2;
   /* @apply pointer-events-none; */
 }
 
 .calendar-title{
-  @apply text-gray-700 text-xl;
+  @apply text-gray-700 text-xl text-center;
 }
 
 .calendar-content{
@@ -118,8 +117,29 @@ export default {
   @apply cursor-pointer;
 }
 
+table{
+  @apply mx-auto w-full;
+}
+
+tbody{
+  display: table
+  @apply w-full;
+}
+
 td{
-  @apply text-center w-10 hover:bg-gray-600 hover:text-white;
+  height: 50px;
+  @apply text-center hover:bg-gray-600 hover:text-white;
+}
+
+
+@media screen and (min-width: 1200px) {
+  .calendar{
+    @apply px-80;
+  }
+
+  td{
+    height: 70px;
+  }
 }
 
 </style>

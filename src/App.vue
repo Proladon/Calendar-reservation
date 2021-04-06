@@ -3,9 +3,10 @@
     
     <Headbar @calendar="openCalendar = !openCalendar" />
 
-    <VirtualScroll v-if="openCalendar" />
+    <!--TODO 開啟自動跳至當前日期 -->
+    <VirtualScroll v-if="openCalendar" @close="openCalendar=false" />
 
-    <DateTable />
+    <DateTable v-if="!openCalendar" />
 
     <div class="footer">
       <div class="reservation-btn pointer-events-auto" @click="reservation">+ 新增預約</div>
@@ -28,7 +29,9 @@ export default {
     DateTable,
     VirtualScroll,
   },
-
+  computed:{
+    tempSelected(){return this.$store.state.tempSelected}
+  },
   data(){
     return{
       openCalendar: false,
@@ -37,7 +40,13 @@ export default {
 
   methods:{
     reservation(){
-      this.$store.commit('ADD_RESERVATIONS')
+      const tempSelected = this.tempSelected
+      const temp = []
+      tempSelected.forEach((period)=>{
+        temp.push(period.id)
+      })
+      console.log(temp.sort())
+      // this.$store.commit('ADD_RESERVATIONS')
     },
   },
   

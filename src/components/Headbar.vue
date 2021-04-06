@@ -12,7 +12,7 @@
       <div class="view change-btn" @click="changeMode">
         {{ viewMode === "day" ? "日檢視" : "周檢視" }} ▼
       </div>
-      <div class="user change-btn">P ▼</div>
+      <div class="user change-btn" @click="lineLogin">P ▼</div>
     </div>
 
     <div class="week-day-container">
@@ -47,6 +47,7 @@
 
 <script>
 import { getDays, subDate, addDate } from "@/assets/utils.js";
+// import axios from 'axios'
 
 export default {
   name: "Headbar",
@@ -167,6 +168,18 @@ export default {
           this.$store.commit("CHANGE_VIEWMODE", "day")
           break
       }
+    },
+
+    lineLogin(){
+      // axios.post('https://access.line.me/dialog/oauth/weblogin', {
+      //   response_type: 'code',
+      //   client_id: '1655833094',
+      //   redirect_uri: 'https://proladon.github.io/Calendar-reservation/customer/auth/line/callback',
+      //   state: '',
+      //   scope: 'openid%20profile'
+      // }).then(res=>{
+      //   console.log(res)
+      // })
     },
 
 
