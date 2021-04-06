@@ -6,7 +6,7 @@
     <!--TODO 開啟自動跳至當前日期 -->
     <VirtualScroll v-if="openCalendar" @close="openCalendar=false" />
 
-    <DateTable v-if="!openCalendar" />
+    <DateTable v-show="!openCalendar" />
 
     <div class="footer">
       <div class="reservation-btn pointer-events-auto" @click="reservation">+ 新增預約</div>

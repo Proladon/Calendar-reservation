@@ -38,9 +38,18 @@
             </div>
           </div>
 
-          <div class="hint-dot">·</div>
         </div>
       </div>
+    </div>
+
+    <div class="hint-dot-container">
+      <div style="width: 18vw;"></div>
+      <div class="week-hint-container">
+        <div class="w-15 px-2.5" v-for="dot in 7" :key="dot">
+          <strong class="hint-dot ">·</strong>
+        </div>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -85,6 +94,7 @@ export default {
     current() {
       this.daysPageInit()
       this.updateSelected()
+      this.showDot()
     },
   },
 
@@ -92,6 +102,32 @@ export default {
     pad(index) {
       const date = this.days[this.weekPage][index];
       return date < 10 ? `0${date}` : date;
+    },
+
+    hideDots(){
+      const dots = document.getElementsByClassName('hint-dot')
+      dots.forEach(dot=>dot.style.color = 'transparent')
+    },
+
+    showDot(){
+      if(this.today.year === this.current.getFullYear()){
+        if(this.today.month === this.current.getMonth() + 1){
+          this.$nextTick(()=>{
+            const curWeek = this.days[this.weekPage]
+            if(curWeek.includes(this.today.date)){
+              const dots = document.getElementsByClassName('hint-dot')
+              dots[this.today.day-1].style.color = '#45DFCD'
+            }
+            else{
+              this.hideDots()
+            }
+          })
+        }else{
+          this.hideDots()
+        }
+      }else{
+        this.hideDots()
+      }
     },
 
     daysPageInit() {
@@ -211,24 +247,27 @@ export default {
   },
 
   mounted() {
-    this.daysPageInit();
+    this.daysPageInit()
     this.updateSelected()
+    this.showDot()
   },
 };
 </script>
 
 <style scoped>
 .headbar {
-  @apply flex flex-col justify-between;
-  @apply shadow-md h-1/6 px-2 pt-2 bg-white;
+  @apply fixed top-0 right-0 left-0 flex flex-col;
+  @apply shadow-xl h-1/6  pt-2.5 bg-white z-10;
 }
 
 .func-btn-container {
+  margin-bottom: 2.5vh;
   @apply flex justify-between;
+  @apply px-3;
 }
 
 .week-day-container {
-  @apply flex justify-between;
+  @apply flex w-full;
 }
 
 .change-btn {
@@ -248,8 +287,13 @@ export default {
   @apply flex;
 }
 
+.select-date-btn{
+  width: 18vw;
+  @apply flex justify-center items-center ;
+}
+
 .day-btn-container {
-  @apply flex;
+  @apply flex justify-around w-full;
 }
 
 .day-btn {
@@ -261,12 +305,24 @@ export default {
   @apply pt-0.5 pb-0.5 px-2.5 leading-4;
 }
 
-.hint-dot {
-  @apply m-0 p-0 text-sm leading-3;
+.hint-dot-container {
+  @apply flex ;
+}
+
+.hint-dot{
+  @apply text-2xl leading-3 align-top text-transparent;
+}
+
+.week-hint-container{
+  @apply flex justify-around w-full;
 }
 
 .selected {
   background-color: #7f74b4;
   @apply rounded-md text-white;
+}
+
+@media screen and (min-width: 1200px) {
+  
 }
 </style>

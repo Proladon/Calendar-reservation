@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
 .virtual-scroll{
-    @apply h-5/6 pb-1;
+    @apply h-full pt-40 pb-1;
 }
 
 </style>

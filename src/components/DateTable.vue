@@ -160,9 +160,6 @@ export default {
         period: hours
       }
 
-
-      
-
       // start 不存在
       if(!temp.start.period){
         temp.start = data
@@ -184,7 +181,7 @@ export default {
       // start/end 都已存在，刷新從start開始
       else if(temp.start.period && temp.end.period){
         clearHighLight('week-period-block')
-        this.day_showReservations()
+        this.week_showReservations()
         
         temp.start = data
         el.style.background = "#E5E5E5"
@@ -296,6 +293,7 @@ export default {
 
 
     // 高光當前選取時段範圍
+    // FIXME dayView 要判斷week
     // TODO 支持橫向選取
     rangeHighLight(){
       if(this.temp.start.period && this.temp.end.period){
@@ -397,7 +395,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #F6F6F6;
-  @apply h-5/6 pb-12;
+  @apply h-full pt-28 pb-12;
 }
 
 table,
@@ -419,11 +417,11 @@ td {
 }
 
 td {
-  /* width: 50%; */
   height: 70px;
 }
 
 .time-period {
-  @apply w-1/6 align-bottom;
+  width: 15vw;
+  @apply align-bottom ;
 }
 </style>
