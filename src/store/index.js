@@ -14,7 +14,6 @@ export default new Vuex.Store({
     tempSelected: [],
     dayTempSelected:{
       start:{
-        el: null,
         date: null,
         week: null,
         dayWeek: null,
@@ -22,7 +21,6 @@ export default new Vuex.Store({
 
       },
       end:{
-        el: null,
         date: null,
         week: null,
         dayWeek: null,
@@ -56,6 +54,9 @@ export default new Vuex.Store({
 
     // Reservation
     ADD_RESERVATIONS: (state) => {
+      if(!state.dayTempSelected.end.period){
+        state.dayTempSelected.end = state.dayTempSelected.start
+      }
       const reservation = JSON.parse(JSON.stringify(state.dayTempSelected))
       state.reservations.push(reservation)
     },

@@ -5,15 +5,9 @@
         <!-- week view -->
         <table>
           <tbody class="week-mode" v-show="viewMode === 'week'">
-            <tr v-for="hours in 24" :key="`${hours}h`" @click="weekSelected(hours, $event.target)">
+            <tr class="period-row" v-for="hours in 24" :key="`${hours}h`" @click="weekSelected(hours, $event.target)">
               <td class="time-period">{{ hours }}:00</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td class="week-period-block" v-for="index in 7" :key="index"></td>
             </tr>
           </tbody>
         </table>
@@ -37,7 +31,7 @@
 </template>
 
 <script>
-import { getDays, subDate, addDate, dateFormat } from "@/assets/utils.js";
+import { getDays, subDate, addDate, dateFormat, clearHighLight } from "@/assets/utils.js";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import '@splidejs/splide/dist/css/themes/splide-default.min.css';
 export default {
@@ -57,7 +51,7 @@ export default {
       },
       temp:{
         start:{
-          el: null,
+          // el: null,
           date: '',
           week: '',
           dayWeek: '',
@@ -65,7 +59,7 @@ export default {
 
         },
         end:{
-          el: null,
+          // el: null,
           date: '',
           week: '',
           dayWeek: '',
@@ -88,39 +82,34 @@ export default {
     viewMode(){
       this.clearSelected()
       this.$store.commit('CLEAR_TEMPSELECTED')
+
+      if(this.viewMode === 'day'){
+        this.day_showReservations()
+      }
+      else{
+        this.week_showReservations()
+      }
     },
     weekPage(){
       this.clearSelected()
-      this.clearHighLight()
+      clearHighLight('week-period-block')
       this.$store.commit('CLEAR_TEMPSELECTED')
 
-      // TODO 顯示當日預約
+      this.week_showReservations()
       
     },
     current(){
       this.clearTemp()
-      this.clearHighLight()
+      clearHighLight('period-block')
       this.clearSelected()
       this.$store.commit('CLEAR_TEMPSELECTED')
 
-      // 顯示當日預約
-      for(let re of this.reservations){
-        if(re.start.date === dateFormat(this.current)){
-          const blocks = document.getElementsByClassName('period-block')
-          const start = re.start.period
-          const end = re.end.period
-          const range = end - start
-          
-          for(let i=0; i<=range; i++){
-            blocks[start-1+i].style.background = "#E5E5E5"
-          }
-        }
-      }
+      this.day_showReservations()
 
     },
   },
   methods: {
-    // 滑動切換週日期
+    // 滑動切換週
     changePage(e, mouse){
       const offsetX = mouse.offset.x
       const offsetY = mouse.offset.y
@@ -156,51 +145,32 @@ export default {
     },
 
 
-    // weekView 下選取時段
+    // weekView 選取時段
+    // TODO 支持橫向選取
     weekSelected(hours, el) {
-      const tempSelected = this.tempSelected;
-      const week = Array.from(el.parentElement.children).indexOf(el);
-      const isExist = tempSelected.find((el) => el.id === `${week}-${hours}`);
-      
-      if (isExist) {
-        el.style.background = "";
-        tempSelected.splice(tempSelected.indexOf(isExist), 1);
-      } 
-      else {
-        el.style.background = "#E5E5E5";
-        this.$store.commit('ADD_TEMPSELECTED', {
-          id: `${week}-${hours}`,
-          date: this.current,
-          week: this.weekPage,
-          el: el,
-          dayweek: week,
-          period: hours,
-        })
-      }
-    },
-
-
-    // dayView 下選取時段
-    // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
-    daySelected(hours, el) {
       const temp = this.temp
+      const base = document.getElementById('splide01-slide01')
+      const rows = base.getElementsByClassName('period-row')
+      const blocks = rows[hours-1].getElementsByClassName('week-period-block')
+      const dayIndex = Array.from(blocks).indexOf(el)
       const data = {
-        el: el,
         date: dateFormat(this.current),
         week: this.weekPage,
-        dayWeek: this.current.getDay(),
+        dayWeek: dayIndex+1,
         period: hours
       }
 
 
+      
+
       // start 不存在
-      if(!temp.start.el){
+      if(!temp.start.period){
         temp.start = data
+        // blocks[hours-1].children[dayIndex+1].style.background = "#E5E5E5"
         el.style.background = "#E5E5E5"
-        
       }
       // start存在，end不存在
-      else if(temp.start.el && !temp.end.el){
+      else if(temp.start.period && !temp.end.period){
         temp.end = data
         el.style.background = "#E5E5E5"
 
@@ -213,11 +183,75 @@ export default {
       }
       // start/end 都已存在，刷新從start開始
       else if(temp.start.period && temp.end.period){
-        // const blocks = document.getElementsByClassName('period-block')
-        // blocks.forEach(el=>{
-        //   el.style.background = ''
-        // })
-        this.clearHighLight()
+        clearHighLight('week-period-block')
+        this.day_showReservations()
+        
+        temp.start = data
+        el.style.background = "#E5E5E5"
+        temp.end = {
+          el: null,
+          date: null,
+          week: null,
+          dayWeek: null,
+          period: null
+        }
+      }
+      
+      if(dayIndex+1 !== temp.start.dayWeek){
+        clearHighLight('week-period-block')
+        this.week_showReservations()
+        
+        temp.start = data
+        el.style.background = "#E5E5E5"
+        temp.end = {
+          el: null,
+          date: null,
+          week: null,
+          dayWeek: null,
+          period: null
+        }
+
+      }
+
+      
+      this.temp = temp
+      this.$store.commit('UPDATE_DATTEMPSELECTED', this.temp)
+      this.rangeHighLight()
+    },
+
+
+    // dayView 選取時段
+    // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
+    daySelected(hours, el) {
+      const temp = this.temp
+      const data = {
+        date: dateFormat(this.current),
+        week: this.weekPage,
+        dayWeek: this.current.getDay(),
+        period: hours
+      }
+
+      // start 不存在
+      if(!temp.start.period){
+        temp.start = data
+        el.style.background = "#E5E5E5"
+      }
+      // start存在，end不存在
+      else if(temp.start.period && !temp.end.period){
+        temp.end = data
+        el.style.background = "#E5E5E5"
+
+        // 時間小當start (交換start/end)
+        if(temp.end.period < temp.start.period){
+          const change = temp.start.period
+          temp.start.period = temp.end.period
+          temp.end.period = change
+        }
+      }
+      // start/end 都已存在，刷新從start開始
+      else if(temp.start.period && temp.end.period){
+        clearHighLight('period-block')
+        this.day_showReservations()
         
         temp.start = data
         el.style.background = "#E5E5E5"
@@ -252,10 +286,6 @@ export default {
       // }
     },
     
-    clearHighLight(){
-      const blocks = document.getElementsByClassName('period-block')
-      blocks.forEach(el=> el.style.background = '')
-    },
 
     clearTemp(){
       for(const prop in this.temp.start){
@@ -264,24 +294,91 @@ export default {
       }
     },
 
+
+    // 高光當前選取時段範圍
+    // TODO 支持橫向選取
     rangeHighLight(){
       if(this.temp.start.period && this.temp.end.period){
-        const blocks = document.getElementsByClassName('period-block')
         const start = this.temp.start.period
         const end = this.temp.end.period
         const range = end - start
+        
 
-        for(let i=0; i<range; i++){
-          blocks[start+i].style.background = "#E5E5E5"
+        if(this.viewMode === 'day'){
+          const blocks = document.getElementsByClassName('period-block')
+
+          for(let i=0; i<range; i++){
+              blocks[start+i].style.background = "#E5E5E5"
+          }
         }
+        else{
+          const dayWeek = this.temp.start.dayWeek
+          const base = document.getElementById('splide01-slide01')
+          const rows = base.getElementsByClassName('period-row')
+
+          for(let i=0; i<=range; i++){
+            rows[start-1+i].children[dayWeek].style.background = "#E5E5E5"
+          }
+        }
+
+
       }
+
     },
+
 
     // 清理暫時選取 highlight 表格
     clearSelected(){
       // TODO 如果在reservations 列表中的元素則不清除，並變換其顏色與新增資訊
       this.tempSelected.forEach(element => {
         element.el.style.background = ''
+      })
+
+      if(this.viewMode === 'day'){
+        this.day_showReservations()
+      }else{
+        this.week_showReservations()
+      }
+
+    },
+
+
+    week_showReservations(){
+      this.$nextTick(()=>{
+        const base = document.getElementById('splide01-slide01')
+        const blocks = base.getElementsByClassName('period-row')
+  
+        for(let re of this.reservations){
+          if(re.start.week === this.weekPage){
+            const start = re.start.period
+            const end = re.end.period
+            const range = end - start
+  
+            for(let i=0; i<=range; i++){
+              blocks[start-1+i].children[re.start.dayWeek].style.background = "#E5E5E5"
+            }
+          }
+        }
+      })
+    },
+
+
+    day_showReservations(){
+      this.$nextTick(()=>{
+        if(this.viewMode !== 'day') return
+        const blocks = document.getElementsByClassName('period-block')
+        for(let re of this.reservations){
+          if(re.start.date === dateFormat(this.current)){
+            const start = re.start.period
+            const end = re.end.period
+            const range = end - start
+            
+            for(let i=0; i<=range; i++){
+              blocks[start-1+i].style.background = "#E5E5E5"
+            }
+          }
+        }
+
       })
     }
   },

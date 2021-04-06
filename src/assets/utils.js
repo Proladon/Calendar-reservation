@@ -18,9 +18,15 @@ const dateFormat = (dateInput) => {
     return `${year}/${month}/${date}`
 }
 
+const clearHighLight = (classNane) => {
+    const blocks = document.getElementsByClassName(classNane)
+    blocks.forEach(el=> el.style.background = '')
+}
+
 module.exports = {
     getDays,
     subDate,
     addDate,
     dateFormat,
+    clearHighLight,
 }
