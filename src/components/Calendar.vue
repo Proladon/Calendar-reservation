@@ -50,14 +50,17 @@ export default {
       // day of month first date
       const startDay = new Date(year, month-1, 1).getDay();
 
+
       // startDay offset
       const offset = startDay - 1;
 
 
       // arrary all date in month
-      const allDays = new Array(offset).fill(" ");
+      let allDays = []
+      if(offset > 0){allDays = new Array(offset).fill(" ")}
+
       for (let i = 1; i <= daysOfMonth; i++) {
-        allDays.push(i);
+        allDays.push(i)
       }
 
       
@@ -87,7 +90,9 @@ export default {
   },
 
   mounted(){
-    this.daysPageInit()
+    this.$nextTick(()=>{
+      this.daysPageInit()
+    })
   }
 
 
@@ -102,15 +107,19 @@ export default {
 }
 
 .calendar-title{
-  @apply text-white text-xl;
+  @apply text-gray-700 text-xl;
 }
 
 .calendar-content{
-  @apply text-white text-lg;
+  @apply text-gray-700 text-lg;
 }
 
 .date-btn{
   @apply cursor-pointer;
+}
+
+td{
+  @apply text-center w-10 hover:bg-gray-600 hover:text-white;
 }
 
 </style>
