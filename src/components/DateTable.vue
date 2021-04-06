@@ -27,7 +27,7 @@
           <tbody class="day-mode" v-show="viewMode === 'day'">
             <tr v-for="hours in 24" :key="`${hours}h`">
               <td class="time-period">{{ hours }}:00</td>
-              <td @click="daySelected(hours, $event.target)"></td>
+              <td class="period-block" @click="daySelected(hours, $event.target)"></td>
             </tr>
           </tbody>
         </table>
@@ -55,6 +55,23 @@ export default {
         focus: false,
         type: 'loop',
       },
+      temp:{
+        start:{
+          el: null,
+          date: '',
+          week: '',
+          dayWeek: '',
+          period: ''
+
+        },
+        end:{
+          el: null,
+          date: '',
+          week: '',
+          dayWeek: '',
+          period: ''
+        }
+      }
     };
   },
   computed: {
@@ -78,7 +95,8 @@ export default {
     current(){
       this.clearSelected()
       this.$store.commit('CLEAR_TEMPSELECTED')
-    }
+    },
+
   },
   methods: {
     // 滑動切換週日期
@@ -142,29 +160,71 @@ export default {
 
 
     // dayView 下選取時段
-    // 點太快會有bug...(源因未釐清)
+    // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
     daySelected(hours, el) {
-      const tempSelected = this.tempSelected;
-      const date = this.current.getDate()
-      const isExist = tempSelected.find((el) => el.id === `${date}-${hours}`);
-      
-      if (isExist) {
-        this.$store.commit('REMOVE_TEMPSELECTED', tempSelected.indexOf(`${date}-${hours}`))
-        el.style.background = ""
-      } 
-      else {
-        el.style.background = "#E5E5E5";
-        this.$store.commit('ADD_TEMPSELECTED', {
-          id: `${date}-${hours}`,
-          date: this.current,
-          week: this.weekPage,
-          el: el,
-          dayweek: this.current.getDay(),
-          period: hours,
-        })
+      const data = {
+        el: el,
+        date: this.current,
+        week: this.weekPage,
+        dayWeek: this.current.getDay(),
+        period: hours
       }
+
+      const temp = this.temp
+
+      // start 不存在
+      if(!temp.start.el){
+        temp.start = data
+        el.style.background = "#E5E5E5"
+      }
+      // start存在，end不存在
+      else if(temp.start.el && !temp.end.el){
+        temp.end = data
+        el.style.background = "#E5E5E5"
+
+        // 時間小當start (交換start/end)
+        if(temp.end.period < temp.start.period){
+          const change = temp.start.period
+          temp.start.period = temp.end.period
+          temp.end.period = change
+        }
+      }
+      // start/end 都已存在，刷新從start開始
+      else if(temp.start.period && temp.end.period){
+        temp.start.el.style.background = ''
+        temp.end.el.style.background = ''
+        
+        temp.start = data
+        el.style.background = "#E5E5E5"
+        temp.end = {
+          el: null,
+          date: null,
+          week: null,
+          dayWeek: null,
+          period: null
+        }
+      }
+      
+      this.temp = temp
+
+      // // 都存在; new > end >> start
+      // else if(hours > temp.end.period ){
+      //   // todo 更新背景顏色
+      //   temp.end = data
+      //   this.updateHighLight('day')
+      // }
+      // // 都存在; new < start << end
+      // else if(hours < temp.start.period){
+      //   // todo 更新背景顏色
+      //   console.log("here")
+      //   temp.end = temp.start
+      //   temp.start = data
+      //   console.log(temp)
+      //   this.updateHighLight('day')
+      // }
     },
 
+    
 
     // 清理暫時選取 highlight 表格
     clearSelected(){
