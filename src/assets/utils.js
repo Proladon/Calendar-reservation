@@ -10,8 +10,17 @@ const addDate = (date, add) => {
     return new Date(date.setDate(date.getDate() + add))
 }
 
+const dateFormat = (dateInput) => {
+    const year= dateInput.getFullYear()
+    const month= dateInput.getMonth() + 1
+    const date= dateInput.getDate()
+
+    return `${year}/${month}/${date}`
+}
+
 module.exports = {
     getDays,
     subDate,
     addDate,
+    dateFormat,
 }

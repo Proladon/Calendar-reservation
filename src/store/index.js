@@ -12,6 +12,23 @@ export default new Vuex.Store({
     viewMode: 'week', // day | week
     reservations:[],
     tempSelected: [],
+    dayTempSelected:{
+      start:{
+        el: null,
+        date: null,
+        week: null,
+        dayWeek: null,
+        period: null
+
+      },
+      end:{
+        el: null,
+        date: null,
+        week: null,
+        dayWeek: null,
+        period: null
+      }
+    },
   },
   mutations: {
 
@@ -39,7 +56,8 @@ export default new Vuex.Store({
 
     // Reservation
     ADD_RESERVATIONS: (state) => {
-      state.reservations = state.tempSelected
+      const reservation = JSON.parse(JSON.stringify(state.dayTempSelected))
+      state.reservations.push(reservation)
     },
 
     ADD_TEMPSELECTED: (state, data) => {
@@ -52,7 +70,20 @@ export default new Vuex.Store({
     
     CLEAR_TEMPSELECTED: (state) => {
       state.tempSelected = []
-    }
+    },
+
+
+    UPDATE_DATTEMPSELECTED: (state, data) => {
+      state.dayTempSelected = data
+    },
+
+    CLEAR_DAYTEMPSELECTED: (state) => {
+      for(const prop in state.dayTempSelected.start){
+        state.dayTempSelected.start[prop] = null
+        state.dayTempSelected.end[prop] = null
+      }
+    },
+
 
   },
 
@@ -67,7 +98,6 @@ export default new Vuex.Store({
   getters:{
     todayInfo: (state) => {
       const today = state.today
-      
       return {
         year: today.getFullYear(),
         month: today.getMonth() + 1,
@@ -75,6 +105,16 @@ export default new Vuex.Store({
         day: today.getDay()
       }
     },
+    
+    currentInfo: (state) => {
+      const current = state.current
+      return {
+        year: current.getFullYear(),
+        month: current.getMonth() + 1,
+        date: current.getDate(),
+        day: current.getDay()
+      }
+    }
 
   }
 })

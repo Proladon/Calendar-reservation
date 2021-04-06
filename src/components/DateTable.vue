@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { getDays, subDate, addDate } from "@/assets/utils.js";
+import { getDays, subDate, addDate, dateFormat } from "@/assets/utils.js";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import '@splidejs/splide/dist/css/themes/splide-default.min.css';
 export default {
@@ -78,9 +78,10 @@ export default {
     viewMode() {return this.$store.state.viewMode},
     current() {return this.$store.state.current},
     todayInfo() {return this.$store.getters.todayInfo},
+    currentInfo() {return this.$store.getters.currentInfo},
     weekPage() {return this.$store.state.weekPage},
-    reservation() {return this.$store.state.reservation},
-    tempSelected() {return this.$store.state.tempSelected}
+    reservations() {return this.$store.state.reservations},
+    tempSelected() {return this.$store.state.tempSelected},
   },
   watch:{
     // 各種狀態更新，清理暫選
@@ -90,13 +91,33 @@ export default {
     },
     weekPage(){
       this.clearSelected()
+      this.clearHighLight()
       this.$store.commit('CLEAR_TEMPSELECTED')
+
+      // TODO 顯示當日預約
+      
     },
     current(){
+      this.clearTemp()
+      this.clearHighLight()
       this.clearSelected()
       this.$store.commit('CLEAR_TEMPSELECTED')
-    },
 
+      // 顯示當日預約
+      for(let re of this.reservations){
+        if(re.start.date === dateFormat(this.current)){
+          const blocks = document.getElementsByClassName('period-block')
+          const start = re.start.period
+          const end = re.end.period
+          const range = end - start
+          
+          for(let i=0; i<=range; i++){
+            blocks[start-1+i].style.background = "#E5E5E5"
+          }
+        }
+      }
+
+    },
   },
   methods: {
     // 滑動切換週日期
@@ -162,20 +183,21 @@ export default {
     // dayView 下選取時段
     // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
     daySelected(hours, el) {
+      const temp = this.temp
       const data = {
         el: el,
-        date: this.current,
+        date: dateFormat(this.current),
         week: this.weekPage,
         dayWeek: this.current.getDay(),
         period: hours
       }
 
-      const temp = this.temp
 
       // start 不存在
       if(!temp.start.el){
         temp.start = data
         el.style.background = "#E5E5E5"
+        
       }
       // start存在，end不存在
       else if(temp.start.el && !temp.end.el){
@@ -191,8 +213,11 @@ export default {
       }
       // start/end 都已存在，刷新從start開始
       else if(temp.start.period && temp.end.period){
-        temp.start.el.style.background = ''
-        temp.end.el.style.background = ''
+        // const blocks = document.getElementsByClassName('period-block')
+        // blocks.forEach(el=>{
+        //   el.style.background = ''
+        // })
+        this.clearHighLight()
         
         temp.start = data
         el.style.background = "#E5E5E5"
@@ -204,8 +229,11 @@ export default {
           period: null
         }
       }
+
       
       this.temp = temp
+      this.$store.commit('UPDATE_DATTEMPSELECTED', this.temp)
+      this.rangeHighLight()
 
       // // 都存在; new > end >> start
       // else if(hours > temp.end.period ){
@@ -223,8 +251,31 @@ export default {
       //   this.updateHighLight('day')
       // }
     },
-
     
+    clearHighLight(){
+      const blocks = document.getElementsByClassName('period-block')
+      blocks.forEach(el=> el.style.background = '')
+    },
+
+    clearTemp(){
+      for(const prop in this.temp.start){
+        this.temp.start[prop] = null
+        this.temp.end[prop] = null
+      }
+    },
+
+    rangeHighLight(){
+      if(this.temp.start.period && this.temp.end.period){
+        const blocks = document.getElementsByClassName('period-block')
+        const start = this.temp.start.period
+        const end = this.temp.end.period
+        const range = end - start
+
+        for(let i=0; i<range; i++){
+          blocks[start+i].style.background = "#E5E5E5"
+        }
+      }
+    },
 
     // 清理暫時選取 highlight 表格
     clearSelected(){
@@ -236,6 +287,9 @@ export default {
   },
   mounted() {
     this.days = getDays(this.todayInfo.year, this.todayInfo.month);
+
+
+
   },
 };
 </script>

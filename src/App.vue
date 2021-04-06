@@ -46,7 +46,7 @@ export default {
         temp.push(period.id)
       })
       console.log(temp.sort())
-      // this.$store.commit('ADD_RESERVATIONS')
+      this.$store.commit('ADD_RESERVATIONS')
     },
   },
   
