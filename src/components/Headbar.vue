@@ -16,7 +16,7 @@
         </div>
         <p class="cur-date" v-show="onlyDayWeekTitle">選擇日期</p>  
         
-        <p class="px-3 text-sm" 
+        <p class="page-title " 
            v-show="!onlyDayWeekTitle">
            {{viewMode === 'day' ? curDate : '預約行事曆'}}
         </p>
@@ -83,9 +83,9 @@
     </div>
 
     <div class="hint-dot-container" v-show="!onlyDayWeekTitle">
-      <div style="width:18vw;"></div>
+      <div class="hint-dot-spacer"></div>
       <div class="week-hint-container">
-        <div class="w-15 px-2.5" v-for="dot in 7" :key="dot">
+        <div v-for="dot in 7" :key="dot">
           <strong class="hint-dot ">·</strong>
         </div>
       </div>
@@ -328,6 +328,10 @@ export default {
   @apply cursor-pointer rounded-full p-2 px-3 text-sm leading-4;
 }
 
+.page-title{
+  @apply px-3 text-sm;
+}
+
 .cur-date {
   flex: 2;
 }
@@ -373,6 +377,10 @@ export default {
   @apply flex ;
 }
 
+.hint-dot-spacer{
+  width: 18vw;
+}
+
 .hint-dot{
   @apply text-2xl leading-3 align-top text-transparent;
 }
@@ -395,7 +403,7 @@ export default {
   .func-btn-container {
     margin-bottom: 3vh;
     @apply flex justify-between;
-    @apply px-20 pt-3;
+    @apply px-14 pt-3;
   }
 
   .day-num-wrapper {
@@ -404,6 +412,18 @@ export default {
 
   .select-date-btn{
     @apply flex justify-center items-center w-14 ;
+  }
+
+  .page-title{
+    @apply text-xl;
+  }
+
+  .change-btn{
+    @apply text-xl;
+  }
+
+  .hint-dot-spacer{
+    width: 16.5vw;
   }
 }
 </style>
