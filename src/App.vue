@@ -12,7 +12,7 @@
 
     <DateTable v-show="!openCalendar" />
 
-    <div class="footer">
+    <div class="footer" >
       <div class="reservation-btn pointer-events-auto" 
            @click="reservation"
            v-if="!openCalendar">
@@ -26,6 +26,11 @@
       </div>
     </div>
 
+
+    <Dialog v-if="openDialog" @closeDialog="openDialog=false" />
+
+
+
   </div>
 </template>
 
@@ -33,6 +38,7 @@
 import Headbar from './components/Headbar.vue'
 import DateTable from './components/DateTable.vue'
 import VirtualScroll from './components/VirtualScroll.vue'
+import Dialog from './components/Dialog.vue'
 
 
 export default {
@@ -42,6 +48,7 @@ export default {
     Headbar,
     DateTable,
     VirtualScroll,
+    Dialog
   },
   computed:{
     tempSelected(){return this.$store.state.tempSelected}
@@ -49,17 +56,20 @@ export default {
   data(){
     return{
       openCalendar: false,
+      openDialog: false,
     }
   },
 
   methods:{
     reservation(){
-      const tempSelected = this.tempSelected
-      const temp = []
-      tempSelected.forEach((period)=>{
-        temp.push(period.id)
-      })
-      this.$store.commit('ADD_RESERVATIONS')
+      this.openDialog = true
+
+      // const tempSelected = this.tempSelected
+      // const temp = []
+      // tempSelected.forEach((period)=>{
+      //   temp.push(period.id)
+      // })
+      // this.$store.commit('ADD_RESERVATIONS')
     },
 
     selectDate(){
@@ -85,6 +95,6 @@ html, body, #app{
 .reservation-btn{
   background-color: #7F74B4;
   @apply mb-3 pt-2 pb-2 px-4 w-1/3;
-  @apply cursor-pointer rounded-md text-center text-white text-sm shadow-lg;
+  @apply cursor-pointer rounded-md text-center text-white text-sm shadow-lg ;
 }
 </style>

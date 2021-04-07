@@ -6,8 +6,10 @@
         <table>
           <tbody class="week-mode" v-show="viewMode === 'week'">
             <tr class="period-row" v-for="hours in 24" :key="`${hours}h`" @click="weekSelected(hours, $event.target)">
-              <td class="time-period">{{ hours }}:00</td>
-              <td class="week-period-block" v-for="index in 7" :key="index"></td>
+              <td class="time-period text-sm">{{pad(hours)}}</td>
+              <td class="week-period-block" v-for="index in 7" :key="index">
+                <div></div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -20,8 +22,10 @@
         <table>
           <tbody class="day-mode" v-show="viewMode === 'day'">
             <tr v-for="hours in 24" :key="`${hours}h`">
-              <td class="time-period">{{ hours }}:00</td>
-              <td class="period-block" @click="daySelected(hours, $event.target)"></td>
+              <td class="time-period">{{pad(hours)}}</td>
+              <td class="period-block" @click="daySelected(hours, $event.target)">
+                <div></div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -109,6 +113,13 @@ export default {
     },
   },
   methods: {
+    pad(hours){
+      let period = 'am'
+      if(hours >= 12){
+        period = 'pm'
+      }
+      return `${hours}:00${period}`
+    },
     // 滑動切換週
     changePage(e, mouse){
       const offsetX = mouse.offset.x
@@ -343,7 +354,6 @@ export default {
       }else{
         this.week_showReservations()
       }
-
     },
 
 
@@ -358,8 +368,11 @@ export default {
             const end = re.end.period
             const range = end - start
   
+            blocks[start-1].children[re.start.dayWeek].innerText = re.info.service
+            blocks[start-1].children[re.start.dayWeek].style.width = "14vw"
             for(let i=0; i<=range; i++){
               blocks[start-1+i].children[re.start.dayWeek].style.background = "#E5E5E5"
+              // blocks[start-1+i].children[re.start.dayWeek].style.width = "14vw"
             }
           }
         }
@@ -382,15 +395,15 @@ export default {
             }
           }
         }
-
       })
+
     }
   },
   mounted() {
-    this.days = getDays(this.todayInfo.year, this.todayInfo.month);
+    this.days = getDays(this.todayInfo.year, this.todayInfo.month)
 
-
-
+    const blocks = document.getElementsByClassName('period-block')
+    blocks[0].innerHTML = "<div>123</div>"
   },
 };
 </script>
@@ -429,5 +442,9 @@ td {
 .time-period {
   width: 15vw;
   @apply align-bottom ;
+}
+
+.week-period-block{
+  width: 15vw;
 }
 </style>
