@@ -10,8 +10,7 @@
         <td v-for="date, index in row" 
             :key="`day-${index}`"
             class="date-btn"
-            @click="selectDate(date)"
-            >
+            @click="selectDate(date)">
           {{date}}
         </td>
       </tr>
@@ -101,12 +100,12 @@ export default {
 <style scoped>
 .calendar{
   @apply absolute top-0 bottom-0 right-0 left-0 z-50;
-  @apply w-full h-full bg-gray-700 opacity-80 px-2;
+  @apply w-full h-full bg-gray-700 opacity-80 px-7;
   /* @apply pointer-events-none; */
 }
 
 .calendar-title{
-  @apply text-gray-700 text-xl text-center;
+  @apply text-gray-700 text-xl text-center font-medium mb-2;
 }
 
 .calendar-content{

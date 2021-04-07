@@ -1,6 +1,6 @@
 <template>
   <div calss="virtual-scroll">
-    <DynamicScroller class="h-full"
+    <DynamicScroller class="h-full pt-28"
       :min-item-size="320"
       :items="item"
       key-field="id"

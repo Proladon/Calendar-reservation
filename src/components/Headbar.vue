@@ -1,21 +1,44 @@
 <template>
   <div class="headbar">
     <div class="func-btn-container">
-      <!-- <p>預約行事曆</p> -->
       <div class="current-date-container">
-        <span v-show="viewMode === 'day'" @click="backwardDate"><img class="transform rotate-180 w-5" src="@/assets/arrow.svg" alt="" srcset=""></span>
-        <p class="pl-1">{{viewMode === 'day' ? curDate : '預約行事曆'}}</p>
-        <span v-show="viewMode === 'day'" @click="forwardDate"><img class="w-5" src="@/assets/arrow.svg" alt="" srcset=""></span>
+        <div v-show="viewMode === 'day'" 
+          @click="backwardDate">
+          <img class="transform rotate-180 w-5" 
+               v-show="!onlyDayWeekTitle" 
+               src="@/assets/arrow.svg" alt="arrow-btn">
+        </div>
+        
+        <p class="cur-date" v-show="onlyDayWeekTitle">選擇日期</p>  
+        
+        <p class="px-3 text-sm" 
+           v-show="!onlyDayWeekTitle">
+           {{viewMode === 'day' ? curDate : '預約行事曆'}}
+        </p>
+        
+        <div v-show="viewMode === 'day'" @click="forwardDate">
+          <img class="w-5" v-show="!onlyDayWeekTitle" src="@/assets/arrow.svg" alt="arrow-btn">
+        </div>
       </div>
 
       <div class="cur-date"></div>
-      <div class="view change-btn" @click="changeMode">
+
+      
+      
+      <div class="view change-btn" v-show="!onlyDayWeekTitle" @click="changeMode">
         {{ viewMode === "day" ? "日檢視" : "周檢視" }} ▼
       </div>
-      <div class="user change-btn" @click="lineLogin">P ▼</div>
+      
+      <div class="user change-btn" v-show="!onlyDayWeekTitle" @click="lineLogin">P ▼</div>
+
+      <img class="close-btn" 
+           v-show="onlyDayWeekTitle" 
+           src="@/assets/close.png" 
+           alt="close-btn"
+           @click="closeCalendar">
     </div>
 
-    <div class="week-day-container">
+    <div class="week-day-container" v-show="!onlyDayWeekTitle">
       <div class="select-date-btn" @click="$emit('calendar')">💎</div>
 
       <div class="day-btn-container" v-if="days.length > 0">
@@ -42,7 +65,17 @@
       </div>
     </div>
 
-    <div class="hint-dot-container">
+    <div v-show="onlyDayWeekTitle" class="mx-auto">{{curDate}}</div>
+
+
+    <div class="calendar-day-week-title-container" v-show="onlyDayWeekTitle">
+
+      <div class="calendar-day-week-title" v-for="day, index in dayEnTitle" :key="`day-${index}`">
+        {{day}}
+      </div>
+    </div>
+
+    <div class="hint-dot-container" v-show="!onlyDayWeekTitle">
       <div style="width: 18vw;"></div>
       <div class="week-hint-container">
         <div class="w-15 px-2.5" v-for="dot in 7" :key="dot">
@@ -60,7 +93,7 @@ import { getDays, subDate, addDate } from "@/assets/utils.js";
 
 export default {
   name: "Headbar",
-  
+  props:['onlyDayWeekTitle'],
   data() {
     return {
       dayEnTitle: ["M", "T", "W", "T", "F", "S", "S"],
@@ -243,6 +276,10 @@ export default {
     // 按鈕減少日期
     backwardDate(){
       this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
+    },
+
+    closeCalendar(){
+      this.$emit('closeCalendar')
     }
   },
 
@@ -261,13 +298,22 @@ export default {
 }
 
 .func-btn-container {
-  margin-bottom: 2.5vh;
   @apply flex justify-between;
   @apply px-3;
 }
 
 .week-day-container {
-  @apply flex w-full;
+  @apply flex w-full pt-4;
+}
+
+.calendar-day-week-title-container{
+  @apply flex justify-between mx-auto;
+}
+
+.calendar-day-week-title{
+  padding-left: 4.5vw;
+  padding-right: 4.5vw;
+  @apply text-xl pt-2;
 }
 
 .change-btn {
@@ -284,7 +330,7 @@ export default {
 }
 
 .current-date-container{
-  @apply flex;
+  @apply flex items-center;
 }
 
 .select-date-btn{
@@ -317,12 +363,20 @@ export default {
   @apply flex justify-around w-full;
 }
 
+.close-btn{
+  max-width: 30px;
+}
+
 .selected {
   background-color: #7f74b4;
   @apply rounded-md text-white;
 }
 
 @media screen and (min-width: 1200px) {
-  
+  .func-btn-container {
+    margin-bottom: 3vh;
+    @apply flex justify-between;
+    @apply px-20 pt-3;
+  }
 }
 </style>

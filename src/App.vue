@@ -1,15 +1,29 @@
 <template>
   <div id="app">
     
-    <Headbar @calendar="openCalendar = !openCalendar" />
+    <Headbar @calendar="openCalendar = !openCalendar" 
+             @closeCalendar="openCalendar=false" 
+             :onlyDayWeekTitle="openCalendar" />
 
-    <!--TODO 開啟自動跳至當前日期 -->
-    <VirtualScroll v-if="openCalendar" @close="openCalendar=false" />
+    <!-- FIXME 開啟自動跳至當前日期 -->
+    <VirtualScroll v-if="openCalendar" 
+                   class="h-full"
+                   @close="openCalendar=false" />
 
     <DateTable v-show="!openCalendar" />
 
     <div class="footer">
-      <div class="reservation-btn pointer-events-auto" @click="reservation">+ 新增預約</div>
+      <div class="reservation-btn pointer-events-auto" 
+           @click="reservation"
+           v-if="!openCalendar">
+           + 新增預約
+      </div>
+
+      <div class="reservation-btn pointer-events-auto" 
+           @click="selectDate"
+           v-if="openCalendar">
+           選擇
+      </div>
     </div>
 
   </div>
@@ -47,6 +61,10 @@ export default {
       })
       this.$store.commit('ADD_RESERVATIONS')
     },
+
+    selectDate(){
+
+    }
   },
   
 

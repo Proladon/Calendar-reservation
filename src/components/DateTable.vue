@@ -148,13 +148,18 @@ export default {
     // weekView 選取時段
     // TODO 支持橫向選取
     weekSelected(hours, el) {
+      if(el.className === 'time-period') return
       const temp = this.temp
       const base = document.getElementById('splide01-slide01')
       const rows = base.getElementsByClassName('period-row')
       const blocks = rows[hours-1].getElementsByClassName('week-period-block')
       const dayIndex = Array.from(blocks).indexOf(el)
+      const year = this.currentInfo.year
+      const month = this.currentInfo.month - 1
+      const date = document.getElementsByClassName('day-num')[dayIndex].innerText
+
       const data = {
-        date: dateFormat(this.current),
+        date: dateFormat(new Date(year, month, date)), 
         week: this.weekPage,
         dayWeek: dayIndex+1,
         period: hours
@@ -220,6 +225,7 @@ export default {
     // dayView 選取時段
     // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
     daySelected(hours, el) {
+      if(el.className === 'time-period') return
       const temp = this.temp
       const data = {
         date: dateFormat(this.current),
