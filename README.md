@@ -12,3 +12,19 @@
 
 雖然有些功能最後還是沒做出來或是有Bug，但大多數的還是能做出來的(雖然寫得很爛)，真的增加了不少經驗值，最重要的是，也可知道自己的不足之處在哪。
 
+## 功能展示
+
+### 周檢視/日檢視: 切換星期/日期
+<div style="display: flex; flex-wrap: wrap;">
+  <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/week_scroll.gif" width="250"/>
+  <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/day_scroll.gif" width="250"/>
+</div>
+
+### 虛擬捲動(無限捲動)日曆: 選擇日期
+<img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/select_date.gif" width="250"/>
+
+### 周檢視/日檢視: 新增預約
+<div style="display: flex; flex-wrap: wrap;">
+  <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/week_reservation.gif" width="250"/>
+  <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/day_reservation.gif" width="250"/>
+</div>
