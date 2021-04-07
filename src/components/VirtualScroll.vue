@@ -16,27 +16,27 @@
 <script>
 import Calendar from '@/components/Calendar.vue'
 
-const item = []
-let id = 0
-for(let year=2021; year<2050; year++){
-  for(let month=1; month<=12; month++){
-    id++
-    item.push({year,month, id:id})
-  }
-}
-
 export default {
   name: 'VirtualScroll',
   components:{Calendar},
   data(){
     return{
-        item
+        item: []
     }
   },
   methods:{
       closeView(){
           this.$emit('close')
       }
+  },
+  mounted(){
+    let id = 0
+    for(let year=2021; year<2050; year++){
+      for(let month=1; month<=12; month++){
+        id++
+        this.item.push({year,month, id:id})
+      }
+    }
   }
 }
 </script>

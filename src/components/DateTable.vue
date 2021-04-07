@@ -401,9 +401,6 @@ export default {
   },
   mounted() {
     this.days = getDays(this.todayInfo.year, this.todayInfo.month)
-
-    const blocks = document.getElementsByClassName('period-block')
-    blocks[0].innerHTML = "<div>123</div>"
   },
 };
 </script>
