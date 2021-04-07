@@ -34,6 +34,7 @@ export default {
       const res = this.dayTempSelected
       res.info = this.info
       this.$store.commit('ADD_RESERVATIONS', JSON.parse(JSON.stringify(res)))
+      this.$store.commit('CLEAR_DAYTEMPSELECTED')
       this.$emit('closeDialog')
     },
     closeDialog(){
@@ -45,8 +46,7 @@ export default {
 
 <style scoped>
 .dialog {
-  position: fixed;
-  top: 5%;
+  @apply fixed top-0 bottom-0 right-0 left-0 z-20;
   @apply flex flex-col items-center justify-center bg-gray-700 bg-opacity-80 w-full h-full;
 }
 
@@ -64,7 +64,7 @@ input {
 }
 
 .btn{
-  @apply mb-3 pt-2 pb-2 px-4 w-full mx-2;
+  @apply mb-3 pt-2 pb-2 px-4 w-full mx-2 rounded-md;
 }
 
 .confirm{

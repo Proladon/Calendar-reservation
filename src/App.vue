@@ -51,7 +51,8 @@ export default {
     Dialog
   },
   computed:{
-    tempSelected(){return this.$store.state.tempSelected}
+    dayTempSelected(){return this.$store.state.dayTempSelected},
+    lastSelectDate(){return this.$store.state.lastSelectDate}
   },
   data(){
     return{
@@ -62,6 +63,7 @@ export default {
 
   methods:{
     reservation(){
+      if(!this.dayTempSelected.start.period || !this.dayTempSelected.end.period)return
       this.openDialog = true
 
       // const tempSelected = this.tempSelected
@@ -73,7 +75,8 @@ export default {
     },
 
     selectDate(){
-
+      this.$store.commit('UPDATE_CURRENT', this.lastSelectDate.date)
+      this.openCalendar = false
     }
   },
   

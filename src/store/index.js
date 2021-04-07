@@ -9,9 +9,12 @@ export default new Vuex.Store({
     today: new Date(),
     current: new Date(),
     weekPage:0,
-    viewMode: 'week', // day | week
+    viewMode: 'week',
     reservations:[],
-    tempSelected: [],
+    lastSelectDate: {
+      el:null,
+      date: null,
+    },
     dayTempSelected:{
       info:{
         service:'',
@@ -54,6 +57,11 @@ export default new Vuex.Store({
       state.selected = data
     },
 
+
+    UPDATE_LASTSELECTDATE: (state, data) => {
+      state.lastSelectDate = data
+    },
+
     
 
     // Reservation
@@ -67,17 +75,17 @@ export default new Vuex.Store({
       // state.reservations.push(reservation)
     },
 
-    ADD_TEMPSELECTED: (state, data) => {
-      state.tempSelected.push(data)
-    },
+    // ADD_TEMPSELECTED: (state, data) => {
+    //   state.tempSelected.push(data)
+    // },
 
-    REMOVE_TEMPSELECTED: (state, index) => {
-      state.tempSelected.splice(index, 1)
-    },
+    // REMOVE_TEMPSELECTED: (state, index) => {
+    //   state.tempSelected.splice(index, 1)
+    // },
     
-    CLEAR_TEMPSELECTED: (state) => {
-      state.tempSelected = []
-    },
+    // CLEAR_TEMPSELECTED: (state) => {
+    //   state.tempSelected = []
+    // },
 
 
     UPDATE_DATTEMPSELECTED: (state, data) => {

@@ -1,6 +1,6 @@
 <template>
   <div calss="virtual-scroll">
-    <DynamicScroller class="h-full pt-28"
+    <DynamicScroller class="dynamic-scroller "
       :min-item-size="320"
       :items="item"
       key-field="id"
@@ -27,6 +27,9 @@ export default {
   methods:{
       closeView(){
           this.$emit('close')
+      },
+      newDate(){
+        this.$emit('newDate')
       }
   },
   mounted(){
@@ -43,7 +46,12 @@ export default {
 
 <style scoped>
 .virtual-scroll{
-    @apply h-full pt-40 pb-1;
+  @apply h-full pt-40 pb-1;
+}
+
+.dynamic-scroller{
+  background-color: #FAFAFA;
+  @apply h-full pt-28 ;
 }
 
 </style>

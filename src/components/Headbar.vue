@@ -8,7 +8,12 @@
                v-show="!onlyDayWeekTitle" 
                src="@/assets/arrow.svg" alt="arrow-btn">
         </div>
-        
+
+        <div v-show="onlyDayWeekTitle" 
+             class="select-date-btn change-btn" 
+             @click="$emit('calendar')">
+          <img class="claendar-icon" src="@/assets/calendar.png" alt="">
+        </div>
         <p class="cur-date" v-show="onlyDayWeekTitle">選擇日期</p>  
         
         <p class="px-3 text-sm" 
@@ -38,10 +43,12 @@
            @click="closeCalendar">
     </div>
 
-    <div class="week-day-container" v-show="!onlyDayWeekTitle">
-      <div class="select-date-btn" @click="$emit('calendar')">💎</div>
+    <div class="week-day-container " v-show="!onlyDayWeekTitle">
 
       <div class="day-btn-container" v-if="days.length > 0">
+        <div class="select-date-btn change-btn" @click="$emit('calendar')">
+          <img class="claendar-icon" src="@/assets/calendar.png" alt="">
+        </div>
         <div
           class="day-btn"
           v-for="(dTitle, index) in dayEnTitle"
@@ -76,7 +83,7 @@
     </div>
 
     <div class="hint-dot-container" v-show="!onlyDayWeekTitle">
-      <div style="width: 18vw;"></div>
+      <div style="width:18vw;"></div>
       <div class="week-hint-container">
         <div class="w-15 px-2.5" v-for="dot in 7" :key="dot">
           <strong class="hint-dot ">·</strong>
@@ -240,15 +247,14 @@ export default {
     },
 
     lineLogin(){
-      // axios.post('https://access.line.me/dialog/oauth/weblogin', {
-      //   response_type: 'code',
-      //   client_id: '1655833094',
-      //   redirect_uri: 'https://proladon.github.io/Calendar-reservation/customer/auth/line/callback',
-      //   state: '',
-      //   scope: 'openid%20profile'
-      // }).then(res=>{
-      //   console.log(res)
-      // })
+      // let URL = 'https://access.line.me/oauth2/v2.1/authorize?'
+
+      // URL += 'response_type=code'
+      // URL += `&client_id=${id}`
+      // URL += `&redirect_uri=${redirect}`
+      // URL += `&state=123`
+      // URL += `&scope=openid%20profile`
+      // window.open(URL, '_blank')
     },
 
 
@@ -294,7 +300,7 @@ export default {
 <style scoped>
 .headbar {
   @apply fixed top-0 right-0 left-0 flex flex-col;
-  @apply shadow-xl h-1/6  pt-2.5 bg-white z-10;
+  @apply shadow-xl pt-2.5 bg-white z-10;
 }
 
 .func-btn-container {
@@ -318,6 +324,7 @@ export default {
 
 .change-btn {
   background-color: #dedaf4;
+  color: #7F75B1;
   @apply cursor-pointer rounded-full p-2 px-3 text-sm leading-4;
 }
 
@@ -334,8 +341,19 @@ export default {
 }
 
 .select-date-btn{
-  width: 18vw;
-  @apply flex justify-center items-center ;
+  /* width: 18vw; */
+  position: relative;
+  @apply flex justify-center items-center w-10 ml-3 mr-1;
+}
+.select-date-btn::after{
+  content: '';
+  background-color: #DEDAF3;
+  @apply rounded-full absolute top-0 bottom-0 left-0 right-0 left-0 mx-auto opacity-50;
+}
+
+.select-date-btn > img{
+  filter: invert(30%);
+  -webkit-filter: invert(30%); /* Safari/Chrome */
 }
 
 .day-btn-container {
@@ -372,11 +390,20 @@ export default {
   @apply rounded-md text-white;
 }
 
+
 @media screen and (min-width: 1200px) {
   .func-btn-container {
     margin-bottom: 3vh;
     @apply flex justify-between;
     @apply px-20 pt-3;
+  }
+
+  .day-num-wrapper {
+    @apply pt-0.5 pb-0.5 px-2.5 leading-6 text-xl;
+  }
+
+  .select-date-btn{
+    @apply flex justify-center items-center w-14 ;
   }
 }
 </style>

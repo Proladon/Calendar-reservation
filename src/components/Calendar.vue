@@ -10,7 +10,7 @@
         <td v-for="date, index in row" 
             :key="`day-${index}`"
             class="date-btn"
-            @click="selectDate(date)">
+            @click="selectDate(date, $event.target)">
           {{date}}
         </td>
       </tr>
@@ -28,11 +28,20 @@ export default {
   computed:{
       current(){return this.$store.state.current},
       today(){return this.$store.state.today},
+      lastSelectDate(){return this.$store.state.lastSelectDate}
   },
 
   data(){
     return{
-      days: []
+      days: [],
+      lastSelected: null
+    }
+  },
+  watch:{
+    lastSelectDate(){
+      if(this.lastSelected){
+        this.lastSelected.style.background = ''
+      }
     }
   },
   methods:{
@@ -80,10 +89,13 @@ export default {
     },
 
 
-    selectDate(date){
-      const newDate = new Date(this.year, this.month-1, date)
-      this.$store.commit('UPDATE_CURRENT', newDate)
-      this.$emit('close')
+    selectDate(date, el){
+      this.lastSelected = el
+      el.style.background = "#7F75B2"
+      this.$store.commit('UPDATE_LASTSELECTDATE',{
+        el:el, 
+        date:new Date(this.year, this.month-1, date)
+      })
     }
   },
 
@@ -99,9 +111,9 @@ export default {
 
 <style scoped>
 .calendar{
+  background-color: #FAFAFA;
   @apply absolute top-0 bottom-0 right-0 left-0 z-50;
   @apply w-full h-full bg-gray-700 opacity-80 px-7;
-  /* @apply pointer-events-none; */
 }
 
 .calendar-title{
@@ -113,7 +125,7 @@ export default {
 }
 
 .date-btn{
-  @apply cursor-pointer;
+  @apply cursor-pointer rounded-full;
 }
 
 table{
@@ -127,7 +139,11 @@ tbody{
 
 td{
   height: 50px;
-  @apply text-center hover:bg-gray-600 hover:text-white;
+  @apply text-center hover:text-white;
+}
+
+td:hover{
+  background-color: #7F75B2;;
 }
 
 

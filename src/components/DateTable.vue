@@ -79,13 +79,11 @@ export default {
     currentInfo() {return this.$store.getters.currentInfo},
     weekPage() {return this.$store.state.weekPage},
     reservations() {return this.$store.state.reservations},
-    tempSelected() {return this.$store.state.tempSelected},
   },
   watch:{
     // 各種狀態更新，清理暫選
     viewMode(){
       this.clearSelected()
-      this.$store.commit('CLEAR_TEMPSELECTED')
 
       if(this.viewMode === 'day'){
         this.day_showReservations()
@@ -97,7 +95,6 @@ export default {
     weekPage(){
       this.clearSelected()
       clearHighLight('week-period-block')
-      this.$store.commit('CLEAR_TEMPSELECTED')
 
       this.week_showReservations()
       
@@ -106,11 +103,17 @@ export default {
       this.clearTemp()
       clearHighLight('period-block')
       this.clearSelected()
-      this.$store.commit('CLEAR_TEMPSELECTED')
 
       this.day_showReservations()
-
     },
+    reservations(){
+      if(this.viewMode === 'day'){
+        this.day_showReservations()
+      }
+      else{
+        this.week_showReservations()
+      }
+    }
   },
   methods: {
     pad(hours){
@@ -160,6 +163,7 @@ export default {
     // TODO 支持橫向選取
     weekSelected(hours, el) {
       if(el.className === 'time-period') return
+      const color = "#bfc1fd"
       const temp = this.temp
       const base = document.getElementById('splide01-slide01')
       const rows = base.getElementsByClassName('period-row')
@@ -180,12 +184,12 @@ export default {
       if(!temp.start.period){
         temp.start = data
         // blocks[hours-1].children[dayIndex+1].style.background = "#E5E5E5"
-        el.style.background = "#E5E5E5"
+        el.style.background = color
       }
       // start存在，end不存在
       else if(temp.start.period && !temp.end.period){
         temp.end = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
 
         // 時間小當start (交換start/end)
         if(temp.end.period < temp.start.period){
@@ -200,7 +204,7 @@ export default {
         this.week_showReservations()
         
         temp.start = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
         temp.end = {
           el: null,
           date: null,
@@ -215,7 +219,7 @@ export default {
         this.week_showReservations()
         
         temp.start = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
         temp.end = {
           el: null,
           date: null,
@@ -237,6 +241,7 @@ export default {
     // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
     daySelected(hours, el) {
       if(el.className === 'time-period') return
+      const color = "#bfc1fd"
       const temp = this.temp
       const data = {
         date: dateFormat(this.current),
@@ -248,12 +253,12 @@ export default {
       // start 不存在
       if(!temp.start.period){
         temp.start = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
       }
       // start存在，end不存在
       else if(temp.start.period && !temp.end.period){
         temp.end = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
 
         // 時間小當start (交換start/end)
         if(temp.end.period < temp.start.period){
@@ -268,7 +273,7 @@ export default {
         this.day_showReservations()
         
         temp.start = data
-        el.style.background = "#E5E5E5"
+        el.style.background = color
         temp.end = {
           el: null,
           date: null,
@@ -317,13 +322,14 @@ export default {
         const start = this.temp.start.period
         const end = this.temp.end.period
         const range = end - start
+        const color = "#bfc1fd"
         
 
         if(this.viewMode === 'day'){
           const blocks = document.getElementsByClassName('period-block')
 
           for(let i=0; i<range; i++){
-              blocks[start+i].style.background = "#E5E5E5"
+              blocks[start+i].style.background = color
           }
         }
         else{
@@ -332,7 +338,7 @@ export default {
           const rows = base.getElementsByClassName('period-row')
 
           for(let i=0; i<=range; i++){
-            rows[start-1+i].children[dayWeek].style.background = "#E5E5E5"
+            rows[start-1+i].children[dayWeek].style.background = color
           }
         }
 
@@ -344,11 +350,6 @@ export default {
 
     // 清理暫時選取 highlight 表格
     clearSelected(){
-      // TODO 如果在reservations 列表中的元素則不清除，並變換其顏色與新增資訊
-      this.tempSelected.forEach(element => {
-        element.el.style.background = ''
-      })
-
       if(this.viewMode === 'day'){
         this.day_showReservations()
       }else{
@@ -368,8 +369,8 @@ export default {
             const end = re.end.period
             const range = end - start
   
-            blocks[start-1].children[re.start.dayWeek].innerText = re.info.service
-            blocks[start-1].children[re.start.dayWeek].style.width = "14vw"
+            // blocks[start-1].children[re.start.dayWeek].innerText = re.info.service
+            // blocks[start-1].children[re.start.dayWeek].style.width = "14vw"
             for(let i=0; i<=range; i++){
               blocks[start-1+i].children[re.start.dayWeek].style.background = "#E5E5E5"
               // blocks[start-1+i].children[re.start.dayWeek].style.width = "14vw"
@@ -400,6 +401,11 @@ export default {
     }
   },
   mounted() {
+    if(this.viewMode === 'day'){
+      this.day_showReservations()
+    }else{
+      this.week_showReservations()
+    }
     this.days = getDays(this.todayInfo.year, this.todayInfo.month)
   },
 };
@@ -408,10 +414,10 @@ export default {
 <style scoped>
 .date-table {
   overflow: scroll;
-  width: 100%;
-  height: 100%;
   background-color: #F6F6F6;
-  @apply h-full pt-28 pb-12;
+  padding-top: 14vw;
+  @apply w-full h-full  pb-12;
+  /* pt-28 */
 }
 
 table,
@@ -443,5 +449,11 @@ td {
 
 .week-period-block{
   width: 15vw;
+}
+
+@media screen and (max-width: 375px) {
+  .date-table {
+  @apply pt-28 ;
+}
 }
 </style>
