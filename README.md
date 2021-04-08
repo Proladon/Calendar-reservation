@@ -8,9 +8,9 @@
 
 但認真來說，架構真的寫得很糟(包括HTML、CSS)，很想整個重寫，但時間上絕對是不允許的，所以造成很多 `dirty code` 和類似 `monkey patch` 不斷的補來補去滾雪球，且還有大量的DOM操作...
 
-目前無法解決或來不急解決的問題，都已整理在 [issues](https://github.com/Proladon/Calendar-reservation/issues)
-
 雖然有些功能最後還是沒做出來或是有Bug，但大多數的還是能做出來的(雖然寫得很爛)，真的增加了不少經驗值，最重要的是，也可知道自己的不足之處在哪。
+
+## 目前無法解決或來不急解決的問題，都已整理在 [issues](https://github.com/Proladon/Calendar-reservation/issues)
 
 ## 功能展示
 
