@@ -15,6 +15,7 @@
 ## 功能展示
 
 ### 周檢視/日檢視: 切換星期/日期
+[dayView 滑動切換畫面glitch](https://github.com/Proladon/Calendar-reservation/issues/5)
 <div style="display: flex; flex-wrap: wrap;">
   <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/week_scroll.gif" width="250"/>
   <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/day_scroll.gif" width="250"/>
@@ -24,6 +25,7 @@
 <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/select_date.gif" width="250"/>
 
 ### 周檢視/日檢視: 新增預約
+預約資訊顯示問題: [預約資訊顯示導致單元格跑版-故暫時放棄顯示訊息](https://github.com/Proladon/Calendar-reservation/issues/9)
 <div style="display: flex; flex-wrap: wrap;">
   <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/week_reservation.gif" width="250"/>
   <img src="https://github.com/Proladon/Calendar-reservation/blob/main/demo_gif/day_reservation.gif" width="250"/>
