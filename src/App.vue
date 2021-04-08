@@ -62,6 +62,7 @@ export default {
   },
 
   methods:{
+    // 開啟確認預約對話框
     reservation(){
       if(!this.dayTempSelected.start.period || !this.dayTempSelected.end.period)return
       this.openDialog = true
@@ -74,11 +75,27 @@ export default {
       // this.$store.commit('ADD_RESERVATIONS')
     },
 
+    
+    // 確認選取日期並切換日期
     selectDate(){
       this.$store.commit('UPDATE_CURRENT', this.lastSelectDate.date)
       this.openCalendar = false
+    },
+
+
+    resize(){
+      // 後猴修補位移高度(才不會被headbar遮住)
+      // this.$nextTick(()=>{
+      //   const headHeight = document.getElementsByClassName('headbar')[0].clientHeight
+      //   const table = document.getElementsByClassName('table')[0].clientHeight
+      //   table.style.paddingTop = headHeight + 'px'
+      // })
     }
   },
+  mounted(){
+    window.onresize = this.resize
+
+  }
   
 
 }

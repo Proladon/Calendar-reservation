@@ -11,10 +11,12 @@ export default new Vuex.Store({
     weekPage:0,
     viewMode: 'week',
     reservations:[],
+    
     lastSelectDate: {
       el:null,
       date: null,
     },
+
     dayTempSelected:{
       info:{
         service:'',
@@ -36,62 +38,43 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-
+    
+    // 切換檢視模式
     CHANGE_VIEWMODE: (state, mode) => {
       state.viewMode = mode
     },
 
-    UPDATE_TODAY: (state, date) => {
-      state.today = date
-    },
     
+    // 更新現在顯示日期
     UPDATE_CURRENT: (state, date) => {
       state.current = date
     },
 
+    
+    // 切換週頁數
     CAHNGE_PAGE: (state, num) => {
       state.weekPage = num
     },
 
-    UPDATE_SELECTED: (state, data) => {
-      state.selected = data
-    },
 
-
+    // 切換週頁數
     UPDATE_LASTSELECTDATE: (state, data) => {
       state.lastSelectDate = data
     },
 
-    
 
-    // Reservation
+    // 新增預約
     ADD_RESERVATIONS: (state, reservation) => {
       state.reservations.push(reservation)
-
-      // if(!state.dayTempSelected.end.period){
-      //   state.dayTempSelected.end = state.dayTempSelected.start
-      // }
-      // const reservation = JSON.parse(JSON.stringify(state.dayTempSelected))
-      // state.reservations.push(reservation)
     },
 
-    // ADD_TEMPSELECTED: (state, data) => {
-    //   state.tempSelected.push(data)
-    // },
 
-    // REMOVE_TEMPSELECTED: (state, index) => {
-    //   state.tempSelected.splice(index, 1)
-    // },
-    
-    // CLEAR_TEMPSELECTED: (state) => {
-    //   state.tempSelected = []
-    // },
-
-
+    // 暫時選取時段範圍
     UPDATE_DATTEMPSELECTED: (state, data) => {
       state.dayTempSelected = data
     },
 
+    // 清除暫時選取時段範圍
     CLEAR_DAYTEMPSELECTED: (state) => {
       for(const prop in state.dayTempSelected.start){
         state.dayTempSelected.start[prop] = null
@@ -99,14 +82,6 @@ export default new Vuex.Store({
       }
     },
 
-
-  },
-
-  actions: {
-
-  },
-
-  modules: {
 
   },
 

@@ -46,20 +46,20 @@ export default {
   },
   methods:{
     daysPageInit() {
-      this.days = [];
-      const year = this.year;
-      const month = this.month;
+      this.days = []
+      const year = this.year
+      const month = this.month
       
       // how many days in month
-      const daysOfMonth = getDays(year, month);
+      const daysOfMonth = getDays(year, month)
       
 
       // day of month first date
-      const startDay = new Date(year, month-1, 1).getDay();
+      const startDay = new Date(year, month-1, 1).getDay()
 
 
       // startDay offset
-      const offset = startDay - 1;
+      const offset = startDay - 1
 
 
       // arrary all date in month
@@ -77,7 +77,7 @@ export default {
         times < Math.ceil(allDays.length / 7);
         times++
       ) {
-        this.days.push(allDays.slice(times * 7, times * 7 + 7));
+        this.days.push(allDays.slice(times * 7, times * 7 + 7))
       }
 
       // offset fill
@@ -89,6 +89,7 @@ export default {
     },
 
 
+    // 紀錄選擇點選日期
     selectDate(date, el){
       this.lastSelected = el
       el.style.background = "#7F75B2"
@@ -117,7 +118,7 @@ export default {
 }
 
 .calendar-title{
-  @apply text-gray-700 text-xl text-center font-medium mb-2;
+  @apply text-gray-700 text-xl text-center font-medium mb-2 mt-2;
 }
 
 .calendar-content{
@@ -138,7 +139,7 @@ tbody{
 }
 
 td{
-  height: 50px;
+  height: 45px;
   @apply text-center hover:text-white;
 }
 

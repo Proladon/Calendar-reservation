@@ -1,5 +1,5 @@
 <template>
-  <div class="date-table">
+  <div class="date-table" ref="table">
     <Splide v-if="viewMode === 'week'" :options="splideOptions" @splide:dragged="changePage">
       <splide-slide>
         <!-- week view -->
@@ -81,7 +81,6 @@ export default {
     reservations() {return this.$store.state.reservations},
   },
   watch:{
-    // 各種狀態更新，清理暫選
     viewMode(){
       this.clearSelected()
 
@@ -95,9 +94,7 @@ export default {
     weekPage(){
       this.clearSelected()
       clearHighLight('week-period-block')
-
       this.week_showReservations()
-      
     },
     current(){
       this.clearTemp()
@@ -123,6 +120,8 @@ export default {
       }
       return `${hours}:00${period}`
     },
+
+
     // 滑動切換週
     changePage(e, mouse){
       const offsetX = mouse.offset.x
@@ -238,7 +237,7 @@ export default {
 
 
     // dayView 選取時段
-    // FIXME 點太快導致被選取格背景色未更新，造成資料與顯示不同步問題
+    // FIXME 點太快被選取格背景色未更新，造成資料與顯示不同步問題
     daySelected(hours, el) {
       if(el.className === 'time-period') return
       const color = "#bfc1fd"
@@ -306,6 +305,7 @@ export default {
     },
     
 
+    // 清理暫時選取
     clearTemp(){
       for(const prop in this.temp.start){
         this.temp.start[prop] = null
@@ -314,8 +314,7 @@ export default {
     },
 
 
-    // 高光當前選取時段範圍
-    // FIXME dayView 要判斷week
+    // 高光當前選取時段範圍(start-end range)
     // TODO 支持橫向選取
     rangeHighLight(){
       if(this.temp.start.period && this.temp.end.period){
@@ -348,7 +347,7 @@ export default {
     },
 
 
-    // 清理暫時選取 highlight 表格
+    // 清理暫時選取高光格
     clearSelected(){
       if(this.viewMode === 'day'){
         this.day_showReservations()
@@ -358,6 +357,7 @@ export default {
     },
 
 
+    // 週檢視下偵測當週預定時段並高光顯示
     week_showReservations(){
       this.$nextTick(()=>{
         const base = document.getElementById('splide01-slide01')
@@ -381,10 +381,13 @@ export default {
     },
 
 
+    // 日檢視下偵測當日預定時段並高光顯示
     day_showReservations(){
       this.$nextTick(()=>{
         if(this.viewMode !== 'day') return
+        
         const blocks = document.getElementsByClassName('period-block')
+
         for(let re of this.reservations){
           if(re.start.date === dateFormat(this.current)){
             const start = re.start.period
@@ -397,7 +400,6 @@ export default {
           }
         }
       })
-
     }
   },
   mounted() {
@@ -406,7 +408,15 @@ export default {
     }else{
       this.week_showReservations()
     }
+
     this.days = getDays(this.todayInfo.year, this.todayInfo.month)
+
+    // 後猴修補位移高度(才不會被headbar遮住)
+    this.$nextTick(()=>{
+      const headHeight = document.getElementsByClassName('headbar')[0].clientHeight
+      const table = this.$refs.table
+      table.style.paddingTop = headHeight + 'px'
+    })
   },
 };
 </script>

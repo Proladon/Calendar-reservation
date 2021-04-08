@@ -27,8 +27,6 @@
       </div>
 
       <div class="cur-date"></div>
-
-      
       
       <div class="view change-btn" v-show="!onlyDayWeekTitle" @click="changeMode">
         {{ viewMode === "day" ? "日檢視" : "周檢視" }} ▼
@@ -95,7 +93,7 @@
 </template>
 
 <script>
-import { getDays, subDate, addDate } from "@/assets/utils.js";
+import { getDays, subDate, addDate } from "@/assets/utils.js"
 // import axios from 'axios'
 
 export default {
@@ -111,16 +109,16 @@ export default {
 
   computed: {
     viewMode() {
-      return this.$store.state.viewMode;
+      return this.$store.state.viewMode
     },
     today() {
-      return this.$store.getters.todayInfo;
+      return this.$store.getters.todayInfo
     },
     weekPage() {
-      return this.$store.state.weekPage;
+      return this.$store.state.weekPage
     },
     current() {
-      return this.$store.state.current;
+      return this.$store.state.current
     },
     curDate(){
       const year = this.current.getFullYear()
@@ -140,16 +138,84 @@ export default {
 
   methods: {
     pad(index) {
-      const date = this.days[this.weekPage][index];
-      return date < 10 ? `0${date}` : date;
+      const date = this.days[this.weekPage][index]
+      return date < 10 ? `0${date}` : date
     },
 
+
+    // 計算當月日期並分頁 (七天為一頁)
+    daysPageInit() {
+      this.days = []
+      const year = this.current.getFullYear()
+      const month = this.current.getMonth() + 1
+      
+      // how many days in month
+      const daysOfMonth = getDays(year, month)
+      
+      // day of month first date
+      const startDay = new Date(year, month-1, 1).getDay()
+
+      // startDay offset
+      const offset = startDay - 1
+
+      // arrary all date in month
+      const allDays = new Array(offset).fill(" ")
+      for (let i = 1; i <= daysOfMonth; i++) {
+        allDays.push(i)
+      }
+
+      // slice days page
+      for (let times = 0;times < Math.ceil(allDays.length / 7);times++) {
+        this.days.push(allDays.slice(times * 7, times * 7 + 7))
+      }
+
+      // offset fill
+      const offsetEnd = 7 - this.days[this.days.length - 1].length
+      for(let i=1; i<=offsetEnd; i++){
+        this.days[this.days.length - 1].push(' ')
+      }
+    },
+
+
+    // 直接點選切換日期
+    selectDate(el, index) {
+      document
+        .getElementsByClassName("day-num-wrapper")
+        .forEach((element) => {
+          element.classList.remove("selected")
+        })
+
+      el.classList.add("selected")
+
+      // update curdate
+      const date = this.days[this.weekPage][index];
+      const newCurrent = new Date(this.current.getFullYear(), this.current.getMonth(), date)
+      this.$store.commit('UPDATE_CURRENT', newCurrent)
+    },
+
+    
+    // 按鈕增加日期
+    forwardDate(){
+      this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
+    },
+
+
+    // 按鈕減少日期
+    backwardDate(){
+      this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
+    },
+
+
+    // 隱藏提示點
     hideDots(){
       const dots = document.getElementsByClassName('hint-dot')
       dots.forEach(dot=>dot.style.color = 'transparent')
     },
 
+
+    // 顯示提示點
     showDot(){
+      // 當目前畫面 年/月/週/日 都符合
       if(this.today.year === this.current.getFullYear()){
         if(this.today.month === this.current.getMonth() + 1){
           this.$nextTick(()=>{
@@ -170,71 +236,34 @@ export default {
       }
     },
 
-    daysPageInit() {
-      this.days = [];
-      const year = this.current.getFullYear();
-      const month = this.current.getMonth() + 1;
-      // how many days in month
-      const daysOfMonth = getDays(year, month);
-      
-      
 
-      // day of month first date
-      const startDay = new Date(year, month-1, 1).getDay();
-
-      // startDay offset
-      const offset = startDay - 1;
-
-
-      // arrary all date in month
-      const allDays = new Array(offset).fill(" ");
-      for (let i = 1; i <= daysOfMonth; i++) {
-        allDays.push(i);
-      }
-
-      
-      // slice days page
-
-      for (
-        let times = 0;
-        times < Math.ceil(allDays.length / 7);
-        times++
-      ) {
-        this.days.push(allDays.slice(times * 7, times * 7 + 7));
-      }
-
-      // offset fill
-      const offsetEnd = 7 - this.days[this.days.length - 1].length
-      for(let i=1; i<=offsetEnd; i++){
-        this.days[this.days.length - 1].push(' ')
-      }
-
-    },
-
+    // 更新暫時選取
     updateSelected(){
       for (let index in this.days) {
         if (this.days[index].includes(this.current.getDate())) {
           const page = index;
           const dateIndex = this.days[index].indexOf(
             this.current.getDate()
-          );
+          )
 
 
           this.$nextTick(() => {
             const el = document.getElementsByClassName(
               "day-num-wrapper"
-            );
+            )
             Array.from(el).forEach((el) =>
               el.classList.remove("selected")
-            );
-            el[dateIndex].classList.add("selected");
+            )
+            el[dateIndex].classList.add("selected")
 
-            this.$store.commit("CAHNGE_PAGE", parseInt(page));
-          });
+            this.$store.commit("CAHNGE_PAGE", parseInt(page))
+          })
         }
       }
     },
 
+
+    // 切換檢視模式(週/日) => 改變全域狀態
     changeMode() {
       switch (this.viewMode) {
         case "day":
@@ -246,6 +275,8 @@ export default {
       }
     },
 
+
+    // Line登入
     lineLogin(){
       // let URL = 'https://access.line.me/oauth2/v2.1/authorize?'
 
@@ -258,49 +289,24 @@ export default {
     },
 
 
-    // 點選日期
-    selectDate(el, index) {
-      document
-        .getElementsByClassName("day-num-wrapper")
-        .forEach((element) => {
-          element.classList.remove("selected");
-        });
-
-      el.classList.add("selected");
-
-      // update curdate
-      const date = this.days[this.weekPage][index];
-      const newCurrent = new Date(this.current.getFullYear(), this.current.getMonth(), date)
-      this.$store.commit('UPDATE_CURRENT', newCurrent)
-    },
-
-    // 按鈕增加日期
-    forwardDate(){
-      this.$store.commit('UPDATE_CURRENT', addDate(this.current, 1))
-    },
-
-    // 按鈕減少日期
-    backwardDate(){
-      this.$store.commit('UPDATE_CURRENT', subDate(this.current, 1))
-    },
-
     closeCalendar(){
       this.$emit('closeCalendar')
     }
   },
+
 
   mounted() {
     this.daysPageInit()
     this.updateSelected()
     this.showDot()
   },
-};
+}
 </script>
 
 <style scoped>
 .headbar {
   @apply fixed top-0 right-0 left-0 flex flex-col;
-  @apply shadow-xl pt-2.5 bg-white z-10;
+  @apply shadow-lg pt-2.5 bg-white z-10;
 }
 
 .func-btn-container {
