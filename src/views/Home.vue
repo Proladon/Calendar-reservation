@@ -1,12 +1,12 @@
 <template>
   <div class="home">
-    <Headbar :today="today" :dates="dates" />
-    <TimeGrid />
+    <Headbar :today="today" :dates="dates" :current="current" :week="week" />
+    <TimeGrid :today="today" :dates="dates" :current="current" :week="week"/>
   </div>
 </template>
 
 <script>
-import {year, month, days, listDates} from '@/assets/utils.js'
+import {year, month, days,date,  listDates} from '@/assets/utils.js'
 import Headbar from '@/components/Headbar.vue'
 import TimeGrid from '@/components/TimeGrid.vue'
 
@@ -17,6 +17,8 @@ export default {
     return{
       dates:[],
       today: new Date(),
+      current: new Date(),
+      week: 0,
     }
   },
   methods:{
@@ -38,6 +40,15 @@ export default {
   },
   beforeMount(){
     this.getDates()
+
+    // 導向今日日期在第幾週
+    const d = date(this.today)
+    for(let page in this.dates){
+      if(this.dates[page].find(date=>date===d)){
+        this.week = page
+      }
+    }
+
   }
 }
 </script>

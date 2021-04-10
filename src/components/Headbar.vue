@@ -36,16 +36,21 @@
 </template>
 
 <script>
-import {date} from '@/assets/utils.js'
+import {dayWeek} from '@/assets/utils.js'
 export default {
   name: 'Headbar',
-  props:['today', 'dates'],
+  props:['today', 'dates', 'current', 'week'],
   data(){
     return{
       dayEnTitle: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
       showDot: 1,
       viewMode: 'week',
-      week: 0,
+    }
+  },
+  watch:{
+    current(){
+      console.log("change")
+      // TODO 判斷是否顯示 Hint-dot
     }
   },
   methods:{
@@ -61,13 +66,8 @@ export default {
     }
   },
   beforeMount(){
-    // 導向金日日期在第幾週
-    const d = date(this.today)
-    for(let page in this.dates){
-      if(this.dates[page].find(date=>date===d)){
-        this.week = page
-      }
-    }
+    // 初始化今日提示點
+    this.showDot = dayWeek(this.today)
   }
 }
 </script>

@@ -11,7 +11,9 @@ const date = (date) => {
 }
 
 const dayWeek = (date) => {
-    return date.getDay()
+    const day = date.getDay()
+    const res = (day === 0) ? 7 : day
+    return res
 }
 
 // 一個月中有幾天
