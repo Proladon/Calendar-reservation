@@ -2,7 +2,12 @@
   <div class="headbar">
     <!-- 最頂部功能按鍵容器 -->
     <div class="func-btn-container">
-      <div class="title">預約行事曆</div>
+      <div class="title" v-if="viewMode === 'week'">預約行事曆</div>
+      <div class="title change-date-btn-container" v-if="viewMode === 'day'">
+        <div @click="preDate">←</div>
+        <div>{{fullDate}}</div>
+        <div @click="nextDate">→</div>
+      </div>
       <div class="func-btn mr-2" @click="changeViewMode">{{viewMode==='day'?'日檢視':'週檢視'}} ▼</div>
       <div class="func-btn">P ▼</div>
     </div>
@@ -14,11 +19,13 @@
       <!-- 星期與日期按鈕 -->
       <div class="day-btn"
              v-for="day, index in dayEnTitle"
-             :key="`day-${index}`">
+             :key="`day-${index}`"
+             :class="{selected : curDate === dates[week][index]}"
+             @click="changeCurDate(index)">
              <p>{{day}}</p>
              <p :class="{'hide-date': dateFormat(dates[week][index]) === '00'}">
                {{dateFormat(dates[week][index])}}
-              </p>
+             </p>
       </div>
     </div>
     
@@ -36,20 +43,22 @@
 </template>
 
 <script>
-import {dayWeek} from '@/assets/utils.js'
+import {year, month, date, dayWeek} from '@/assets/utils.js'
 export default {
   name: 'Headbar',
   props:['today', 'dates', 'current', 'week', 'viewMode'],
+  computed:{
+    curDate(){
+      return date(this.current)
+    },
+    fullDate(){
+      return `${year(this.current)} / ${month(this.current)} / ${date(this.current)}`
+    }
+  },
   data(){
     return{
       dayEnTitle: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
       showDot: 1,
-    }
-  },
-  watch:{
-    current(){
-      console.log("change")
-      // TODO 判斷是否顯示 Hint-dot
     }
   },
   methods:{
@@ -67,6 +76,20 @@ export default {
     changeViewMode(){
       const mode = (this.viewMode === 'week') ? 'day' : 'week'
       this.$emit('changeViewMode', mode)
+    },
+
+    changeCurDate(index){
+      const selectDate = this.dates[this.week][index]
+      const newDate = new Date(year(this.current), month(this.current) - 1, selectDate)
+      this.$emit('changeCurent', newDate)
+    },
+
+    preDate(){
+      this.$emit('preDate')
+    },
+
+    nextDate(){
+      this.$emit('nextDate')
     }
   },
   beforeMount(){
@@ -95,13 +118,16 @@ export default {
 }
 
 .func-btn{
-  @apply px-2;
-  @apply p-2 px-4 bg-skyblue-100 rounded-full;
+  @apply p-2 px-4 bg-skyblue-100 rounded-full cursor-pointer;
+}
+
+.change-date-btn-container{
+  @apply flex;
 }
 
 
 /*==================*/
-/* function btn container */
+/* day btn container */
 /*==================*/
 .day-btn-container{
   display: grid;
@@ -111,7 +137,7 @@ export default {
 
 .day-btn{
   @apply hover:bg-skyblue-100;
-  @apply w-5/6 p-1 rounded-md cursor-pointer text-sm leading-4;
+  @apply w-5/6 p-1 rounded-md cursor-pointer text-sm leading-4 select-none;
 }
 
 .hide-date{
@@ -132,6 +158,10 @@ export default {
   top: -10px;
   @apply absolute left-0 right-0;
   @apply text-center pointer-events-none leading-3 text-5xl text-skyblue-100;
+}
+
+.selected{
+  @apply bg-skyblue-100;
 }
 /* ================= */
 </style>

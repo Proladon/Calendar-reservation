@@ -5,6 +5,9 @@
                     :current="current" 
                     :week="week" 
                     :viewMode="viewMode" 
+                    @preDate="preDate"
+                    @nextDate="nextDate"
+                    @changeCurent="changeCurent"
                     @changeViewMode="changeViewMode" />
     
     <TimeGrid :today="today" 
@@ -52,6 +55,20 @@ export default {
     changeViewMode(mode){
       this.viewMode = mode
     },
+
+    changeCurent(date){
+      this.current = date
+    },
+
+    preDate(){
+      const newDate = new Date(year(this.current), month(this.current)-1, date(this.current)-1)
+      this.current = newDate
+    },
+
+    nextDate(){
+      const newDate = new Date(year(this.current), month(this.current)-1, date(this.current)+1)
+      this.current = newDate
+    }
   },
   beforeMount(){
     this.getDates()

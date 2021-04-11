@@ -1,6 +1,6 @@
 <template>
   <div class="time-grid">
-    
+
     <!-- Week -->
     <div class="week-view-container" v-if="viewMode === 'week'">
       <div class="week-period-row" v-for="hours in 24" :key="`time-${hours}`">
@@ -14,7 +14,7 @@
       </div>
     </div>
 
-      <!-- Day -->
+    <!-- Day -->
     <div class="day-view-container" v-if="viewMode === 'day'">
       <div class="day-period-row" v-for="hours in 24" :key="`time-${hours}`">
         <div class="period-block hours"><span>{{period(hours)}}</span></div>
@@ -125,7 +125,7 @@ export default {
 .time-bar{
   top: var(--topOffset);
   @apply absolute right-0 left-0;
-  @apply border border-gray-500;
+  @apply border border-gray-500 select-none;
 }
 
 
@@ -134,6 +134,6 @@ export default {
   font-size: 30px;
   top: var(--dotOffset);
   left: -10px;
-  @apply text-gray-500;
+  @apply text-gray-500 select-none;
 }
 </style>
