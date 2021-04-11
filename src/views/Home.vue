@@ -1,7 +1,17 @@
 <template>
   <div class="home">
-    <Headbar :today="today" :dates="dates" :current="current" :week="week" />
-    <TimeGrid :today="today" :dates="dates" :current="current" :week="week"/>
+    <Headbar :today="today" 
+                    :dates="dates" 
+                    :current="current" 
+                    :week="week" 
+                    :viewMode="viewMode" 
+                    @changeViewMode="changeViewMode" />
+    
+    <TimeGrid :today="today" 
+                    :dates="dates" 
+                    :current="current" 
+                    :week="week" 
+                    :viewMode="viewMode" />
   </div>
 </template>
 
@@ -19,6 +29,7 @@ export default {
       today: new Date(),
       current: new Date(),
       week: 0,
+      viewMode: 'week'
     }
   },
   methods:{
@@ -36,6 +47,10 @@ export default {
       for(let i=0; i < sliceTimes; i++){
           this.dates[i] = allDates.slice(7*i, 7 + 7*i)
       }
+    },
+
+    changeViewMode(mode){
+      this.viewMode = mode
     },
   },
   beforeMount(){

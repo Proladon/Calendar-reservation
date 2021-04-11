@@ -1,48 +1,60 @@
 <template>
-   <div class="time-grid">
-     <div class="period-row"
-            v-for="hours in 24" 
-            :key="`time-${hours}`">
-            
-      <div class="period-block hours"><span>{{period(hours)}}</span></div>
-      <div class="period-block" 
-             v-for="index in 7" 
-             :style="timePosition"
-             :key="`${index}-${hours}`">
-
-             <hr class="time-bar"
-                   v-if="getBlockDate(index) === curDate && showTimeBar === `${index}-${hours}`">
-
-             <div class="time-dot"
-                    v-if="getBlockDate(index) === curDate && showTimeBar === `${index}-${hours}`">
-                    <span>●</span> 
-              </div>
+  <div class="time-grid">
+    
+    <!-- Week -->
+    <div class="week-view-container" v-if="viewMode === 'week'">
+      <div class="week-period-row" v-for="hours in 24" :key="`time-${hours}`">
+        <div class="period-block hours"><span>{{period(hours)}}</span></div>
+        <div class="period-block" v-for="index in 7" :style="timePosition" :key="`${index}-${hours}`">
+          <hr class="time-bar" v-if="getBlockDate(index) === todayDate && showTimeBar === `${index}-${hours}`">
+          <div class="time-dot" v-if="getBlockDate(index) === todayDate && showTimeBar === `${index}-${hours}`">
+            <span>●</span>
+          </div>
+        </div>
       </div>
+    </div>
 
-     </div>
-   </div>
+      <!-- Day -->
+    <div class="day-view-container" v-if="viewMode === 'day'">
+      <div class="day-period-row" v-for="hours in 24" :key="`time-${hours}`">
+        <div class="period-block hours"><span>{{period(hours)}}</span></div>
+        <div class="period-block" :style="timePosition" :key="`day-${hours}`">
+          <hr class="time-bar" v-if="curDate === todayDate && showDayTimeBar === `day-${hours}`">
+          <div class="time-dot" v-if="curDate === todayDate && showDayTimeBar === `day-${hours}`">
+            <span>●</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <script>
 import {date, dayWeek} from '@/assets/utils.js'
 export default {
     name: 'TimeGrid',
-    props:['today', 'dates', 'current', 'week'],
+    props:['today', 'dates', 'current', 'week', 'viewMode'],
     data(){
       return{
         showTimeBar: '1-1',
+        showDayTimeBar: '1-1'
       }
     },
     computed:{
-      curDate(){
+      todayDate(){
         return date(this.today)
       },
 
-      curHours(){
-        return this.today.getHours()
+      curDate(){
+        return date(this.current)
       },
 
-      curDay(){
+      curHours(){
+        return this.today.getHours() + 1
+      },
+
+      todayDay(){
         return dayWeek(this.today)
       },
 
@@ -70,7 +82,8 @@ export default {
     },
 
     beforeMount(){
-      this.showTimeBar = `${this.curDay}-${this.curHours}`
+      this.showTimeBar = `${this.todayDay}-${this.curHours}`
+      this.showDayTimeBar = `day-${this.curHours}`
     }
 }
 </script>
@@ -80,10 +93,17 @@ export default {
   @apply w-full h-full text-center;
 }
 
-.period-row{
+.week-period-row, .day-period-row{
   display: grid;
   height: 65px;
+}
+
+.week-period-row{
   grid-template-columns: 1.3fr repeat(7, 1fr);
+}
+
+.day-period-row{
+  grid-template-columns: 1.3fr 7fr;
 }
 
 .period-block{
@@ -105,7 +125,7 @@ export default {
 .time-bar{
   top: var(--topOffset);
   @apply absolute right-0 left-0;
-  @apply border border-skyblue-100;
+  @apply border border-gray-500;
 }
 
 
@@ -114,6 +134,6 @@ export default {
   font-size: 30px;
   top: var(--dotOffset);
   left: -10px;
-  color: skyblue;
+  @apply text-gray-500;
 }
 </style>

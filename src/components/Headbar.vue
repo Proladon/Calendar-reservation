@@ -3,7 +3,7 @@
     <!-- 最頂部功能按鍵容器 -->
     <div class="func-btn-container">
       <div class="title">預約行事曆</div>
-      <div class="func-btn mr-2">{{viewMode==='day'?'日檢視':'週檢視'}} ▼</div>
+      <div class="func-btn mr-2" @click="changeViewMode">{{viewMode==='day'?'日檢視':'週檢視'}} ▼</div>
       <div class="func-btn">P ▼</div>
     </div>
 
@@ -39,12 +39,11 @@
 import {dayWeek} from '@/assets/utils.js'
 export default {
   name: 'Headbar',
-  props:['today', 'dates', 'current', 'week'],
+  props:['today', 'dates', 'current', 'week', 'viewMode'],
   data(){
     return{
       dayEnTitle: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
       showDot: 1,
-      viewMode: 'week',
     }
   },
   watch:{
@@ -63,6 +62,11 @@ export default {
       }else{
         return date
       }
+    },
+
+    changeViewMode(){
+      const mode = (this.viewMode === 'week') ? 'day' : 'week'
+      this.$emit('changeViewMode', mode)
     }
   },
   beforeMount(){
@@ -127,7 +131,7 @@ export default {
 .hint-dot > span{
   top: -10px;
   @apply absolute left-0 right-0;
-  @apply text-center pointer-events-none leading-3 text-5xl;
+  @apply text-center pointer-events-none leading-3 text-5xl text-skyblue-100;
 }
 /* ================= */
 </style>
