@@ -26,6 +26,16 @@ import TimeGrid from '@/components/TimeGrid.vue'
 export default {
   name: 'Home',
   components: {Headbar, TimeGrid},
+  watch:{
+    current(){
+      const d = date(this.current)
+      for(let page in this.dates){
+        if(this.dates[page].find(date => date === d)){
+          this.week = page
+        }
+      }
+    }
+  },
   data(){
     return{
       dates:[],
